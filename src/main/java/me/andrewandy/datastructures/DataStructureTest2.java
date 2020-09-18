@@ -1,8 +1,8 @@
 package me.andrewandy.datastructures;
 
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.Collection;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class DataStructureTest2 {
@@ -67,12 +67,16 @@ public class DataStructureTest2 {
             }
             final double seconds = totalNanos / 1000d / 1000d / 1000d;
             final double singleNanos = (double) totalNanos / toCheckLookups.length;
-            System.out.println("Trial " + index + " | Execution Time: " + seconds + "s | Average Time Per Operation: " + singleNanos + "ns");
+            System.out.println("Trial " + index + " | Execution Time: " + seconds
+                                   + "s | Average Time Per Operation: " + singleNanos + "ns");
         }
         final double seconds = avg / 1000d / 1000d / 1000d;
         final double singleNanos = (double) avg / toCheckLookups.length;
-        System.out.println("Average Execution Time: " + seconds + "s | Average Time Per Operation: " + singleNanos + "ns");
-        System.out.println("Total Execution Time: " + ((end - start) / 1000d / 1000d / 1000d) + "s");
+        System.out.println(
+            "Average Execution Time: " + seconds + "s | Average Time Per Operation: " + singleNanos
+                + "ns");
+        System.out.println(
+            "Total Execution Time: " + ((end - start) / 1000d / 1000d / 1000d) + "s");
         System.out.println(" ");
 
     }

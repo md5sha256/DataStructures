@@ -4,10 +4,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class DataStructureTest {
 
-    private final Collection<Integer> collection;
-
-    private final int testSize;
-    private final Integer[] toAdd;
     private static final Integer[] toCheckLookups = new Integer[10000];
 
     static {
@@ -16,6 +12,10 @@ public class DataStructureTest {
             toCheckLookups[index] = random.nextInt();
         }
     }
+
+    private final Collection<Integer> collection;
+    private final int testSize;
+    private final Integer[] toAdd;
 
     public DataStructureTest(final Collection<Integer> collection, final int testSize) {
         this.collection = collection;
@@ -45,7 +45,8 @@ public class DataStructureTest {
         collection.removeAll(toAdd);
     }
 
-    private void runTestResults(final String name, Runnable toRun, int runs, long sampleSize, Runnable resetter) {
+    private void runTestResults(final String name, Runnable toRun, int runs, long sampleSize,
+                                Runnable resetter) {
         System.out.println(" ");
         System.out.println("Test Name: " + name);
         System.out.println("Trials: " + runs);
@@ -62,7 +63,7 @@ public class DataStructureTest {
             }
         }
         long end = System.nanoTime();
-        double elapsed = (end - start) / 1000d / 1000d/ 1000d;
+        double elapsed = (end - start) / 1000d / 1000d / 1000d;
         final double singleNanos = (double) avg / sampleSize;
         System.out.println("Average Time Per Operation: " + singleNanos + "ns");
         System.out.println("Test Execution Time: " + elapsed + "s");
@@ -71,8 +72,10 @@ public class DataStructureTest {
     public void runTest(int runs) {
         System.out.println("---- " + collection.getClass().getName() + " Test ----");
         runTestResults("Bulk Add", this::testAdd, runs, testSize, collection::clear);
-        runTestResults("Bulk Remove", this::testRemove, runs, testSize, () -> collection.addAll(toAdd));
-        runTestResults("Bulk Contains", this::testContains, runs, toCheckLookups.length, () -> {});
+        runTestResults("Bulk Remove", this::testRemove, runs, testSize,
+                       () -> collection.addAll(toAdd));
+        runTestResults("Bulk Contains", this::testContains, runs, toCheckLookups.length, () -> {
+        });
         System.out.println(" ");
     }
 

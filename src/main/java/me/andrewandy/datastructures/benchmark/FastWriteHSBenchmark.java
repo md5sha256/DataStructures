@@ -2,12 +2,10 @@ package me.andrewandy.datastructures.benchmark;
 
 import me.andrewandy.datastructures.Collection;
 import me.andrewandy.datastructures.FastWriteHashSet;
-import me.andrewandy.datastructures.LinkedList;
 import me.andrewandy.datastructures.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.CompilerControl;
 import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;

@@ -2,8 +2,7 @@ package me.andrewandy.datastructures;
 
 public class Utils {
 
-    @SuppressWarnings("unchecked")
-    public static <T> T unsafeCast(Object o) {
+    @SuppressWarnings("unchecked") public static <T> T unsafeCast(Object o) {
         return (T) o;
     }
 

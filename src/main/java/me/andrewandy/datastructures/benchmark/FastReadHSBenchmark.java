@@ -2,12 +2,10 @@ package me.andrewandy.datastructures.benchmark;
 
 import me.andrewandy.datastructures.Collection;
 import me.andrewandy.datastructures.FastReadHashSet;
-import me.andrewandy.datastructures.LinkedList;
 import me.andrewandy.datastructures.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.CompilerControl;
 import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -20,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class FastReadHSBenchmark {
 
     @Benchmark public void testSingularAdd(final AddState state) {
-        for (Integer i : state.sample) {
+        for (final Integer i : state.sample) {
             state.collection.add(i);
         }
     }
@@ -30,7 +28,7 @@ public class FastReadHSBenchmark {
     }
 
     @Benchmark public void testSingularRemove(final RemovalState state) {
-        for (Integer i : state.sample) {
+        for (final Integer i : state.sample) {
             state.collection.add(i);
         }
     }
@@ -40,7 +38,7 @@ public class FastReadHSBenchmark {
     }
 
     @Benchmark public void testContains(final ContainsState state) {
-        for (Integer i : state.sample) {
+        for (final Integer i : state.sample) {
             state.collection.contains(i);
         }
     }
@@ -53,7 +51,7 @@ public class FastReadHSBenchmark {
         public AddState() {
         }
 
-        @Setup(Level.Trial) public void init(Main.GlobalValues values) {
+        @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
             this.collection = new FastReadHashSet<>();
             this.sample = new Integer[values.size()];
             final Random random = new Random();
@@ -81,7 +79,7 @@ public class FastReadHSBenchmark {
 
         }
 
-        @Setup(Level.Trial) public void init(Main.GlobalValues values) {
+        @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
             this.collection = new FastReadHashSet<>();
             this.sample = new Integer[values.size()];
             final Random random = new Random();
@@ -110,7 +108,7 @@ public class FastReadHSBenchmark {
 
         }
 
-        @Setup(Level.Trial) public void init(Main.GlobalValues values) {
+        @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
             this.collection = new FastReadHashSet<>();
             this.sample = new Integer[values.size()];
             final Random random = new Random();
