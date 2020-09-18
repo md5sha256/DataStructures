@@ -14,6 +14,10 @@ public class FastReadHashSet<T> implements Collection<T> {
 
     private final float loadCapacity;
 
+    public FastReadHashSet() {
+        this(10, 0.75f);
+    }
+
     public FastReadHashSet(int initialCap, float loadCapacity) {
         if (loadCapacity < 0 || loadCapacity > 1) {
             throw new IllegalArgumentException("Invalid load capacity!");

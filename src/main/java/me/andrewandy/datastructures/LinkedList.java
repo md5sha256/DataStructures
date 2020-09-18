@@ -10,18 +10,84 @@ public class LinkedList<E> implements Collection<E> {
     private Node<E> last = start;
     private int size;
 
-    @Override
-    public void addAll(Collection<E> collection) {
+    private static <E> void insertNode(Node<E> prev, Node<E> toInsert) {
+        Node<E> next = prev.next;
+        prev.next = toInsert;
+        toInsert.next = next;
+    }
+
+    @Override public void addAll(Collection<E> collection) {
         for (E e : collection) {
             add(e);
         }
     }
 
-    @Override
-    public void addAll(E[] iterable) {
+    @Override public void addAll(E[] iterable) {
         for (E e : iterable) {
             add(e);
         }
+    }
+
+    public void add(E element) {
+        if (last == start) {
+            last = new Node<>(element);
+            start.next = last;
+        } else {
+            last.next = new Node<>(element);
+        }
+        size++;
+    }
+
+    @Override public void remove(E e) {
+        Iterator<E> iterator = iterator();
+        while (iterator.hasNext()) {
+            E next = iterator.next();
+            if (Objects.equals(e, next)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    @Override public void removeAll(Collection<E> collection) {
+        for (E e : collection) {
+            remove(e);
+        }
+    }
+
+    @Override public void removeAll(E[] iterable) {
+        for (E e : iterable) {
+            remove(e);
+        }
+    }
+
+    @Override public void clear() {
+        this.start.next = null;
+        this.start.set(null);
+        this.last = start;
+        this.size = 0;
+    }
+
+    public int size() {
+        return this.size;
+    }
+
+    @Override public boolean contains(E element) {
+        /*
+        Iterator<E> iterator = new NodeIterator();
+        while (iterator.hasNext()) {
+            if (Objects.equals(iterator.next(), element)) {
+                return true;
+            }
+        }
+        return false;
+
+         */
+        if (this.size == 0) {
+            return false;
+        } else if (this.size == 1) {
+            return Objects.equals(this.start.val, element);
+        }
+        return indexOf(element) != -1;
     }
 
     public E get(int index) {
@@ -38,49 +104,6 @@ public class LinkedList<E> implements Collection<E> {
             i++;
         }
         return current.get();
-    }
-
-    public void add(E element) {
-        if (last == start) {
-            last = new Node<>(element);
-            start.next = last;
-        } else {
-            last.next = new Node<>(element);
-        }
-        size++;
-    }
-
-    @Override
-    public void remove(E e) {
-        Iterator<E> iterator = iterator();
-        while (iterator.hasNext()) {
-            E next = iterator.next();
-            if (Objects.equals(e, next)) {
-                iterator.remove();
-            }
-        }
-    }
-
-    @Override
-    public void removeAll(Collection<E> collection) {
-        for (E e : collection) {
-            remove(e);
-        }
-    }
-
-    @Override
-    public void removeAll(E[] iterable) {
-        for (E e : iterable) {
-            remove(e);
-        }
-    }
-
-    @Override
-    public void clear() {
-        this.start.next = null;
-        this.start.set(null);
-        this.last = start;
-        this.size = 0;
     }
 
     public void add(int index, E element) {
@@ -102,21 +125,6 @@ public class LinkedList<E> implements Collection<E> {
             prev.next = toRemove == null ? null : toRemove.next;
         }
         size--;
-    }
-
-    @Override
-    public boolean contains(E element) {
-        /*
-        Iterator<E> iterator = new NodeIterator();
-        while (iterator.hasNext()) {
-            if (Objects.equals(iterator.next(), element)) {
-                return true;
-            }
-        }
-        return false;
-
-         */
-        return indexOf(element) != -1;
     }
 
     public int indexOf(E element) {
@@ -143,12 +151,6 @@ public class LinkedList<E> implements Collection<E> {
         return index;
     }
 
-    private static <E> void insertNode(Node<E> prev, Node<E> toInsert) {
-        Node<E> next = prev.next;
-        prev.next = toInsert;
-        toInsert.next = next;
-    }
-
     private Node<E> getNode(int index) {
         if (index == 0) {
             return start;
@@ -165,12 +167,7 @@ public class LinkedList<E> implements Collection<E> {
         return nodeIterator.getCurrent();
     }
 
-    public int size() {
-        return this.size;
-    }
-
-    @Override
-    public Iterator<E> iterator() {
+    @Override public Iterator<E> iterator() {
         return new NodeIterator();
     }
 
@@ -201,6 +198,7 @@ public class LinkedList<E> implements Collection<E> {
         }
     }
 
+
     private class NodeIterator implements Iterator<E> {
 
         private Node<E> current;
@@ -214,13 +212,11 @@ public class LinkedList<E> implements Collection<E> {
             return this.current;
         }
 
-        @Override
-        public boolean hasNext() {
-            return LinkedList.this.last == this.current;
+        @Override public boolean hasNext() {
+            return this.current != null && this.current.next != null;
         }
 
-        @Override
-        public E next() {
+        @Override public E next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -229,13 +225,13 @@ public class LinkedList<E> implements Collection<E> {
             return current.get();
         }
 
-        @Override
-        public void remove() {
-            if (prev == null) {
-                return;
+        @Override public void remove() {
+            if (current == null) {
+                throw new NoSuchElementException();
             }
-            --LinkedList.this.size;
-            prev.next = current == null ? null : current.next;
+            if (prev != null) {
+                prev.next = current.next;
+            }
         }
     }
 

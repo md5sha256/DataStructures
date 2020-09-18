@@ -12,7 +12,7 @@ public class FastWriteHashSet<T> implements Collection<T> {
 
     public FastWriteHashSet(int bucketSize) {
         if (bucketSize < 1) {
-            throw new IllegalArgumentException("Invalid initial capacity!");
+            throw new IllegalArgumentException("Invalid initial capacity: " + bucketSize);
         }
         this.nodes = new Node[bucketSize];
         for (int i = 0; i < bucketSize; i++) {
