@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class LinkedListBenchmark {
 
     @Benchmark public void testSingularAdd(final AddState state) {
-        for (Integer i : state.sample) {
+        for (final Integer i : state.sample) {
             state.collection.add(i);
         }
     }
@@ -28,7 +28,7 @@ public class LinkedListBenchmark {
     }
 
     @Benchmark public void testSingularRemove(final RemovalState state) {
-        for (Integer i : state.sample) {
+        for (final Integer i : state.sample) {
             state.collection.add(i);
         }
     }
@@ -38,7 +38,7 @@ public class LinkedListBenchmark {
     }
 
     @Benchmark public void testContains(final ContainsState state) {
-        for (Integer i : state.sample) {
+        for (final Integer i : state.sample) {
             state.collection.contains(i);
         }
     }
@@ -50,7 +50,7 @@ public class LinkedListBenchmark {
         public AddState() {
         }
 
-        @Setup(Level.Trial) public void init(Main.GlobalValues values) {
+        @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
             this.collection = new LinkedList<>();
             this.sample = new Integer[values.size()];
             final Random random = new Random();
@@ -78,7 +78,7 @@ public class LinkedListBenchmark {
 
         }
 
-        @Setup(Level.Trial) public void init(Main.GlobalValues values) {
+        @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
             this.collection = new LinkedList<>();
             this.sample = new Integer[values.size()];
             final Random random = new Random();
@@ -107,7 +107,7 @@ public class LinkedListBenchmark {
 
         }
 
-        @Setup(Level.Trial) public void init(Main.GlobalValues values) {
+        @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
             this.collection = new LinkedList<>();
             this.sample = new Integer[values.size()];
             final Random random = new Random();

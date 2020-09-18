@@ -32,7 +32,7 @@ public class DataStructureTest {
     }
 
     private void testContains() {
-        for (Integer i : toCheckLookups) {
+        for (final Integer i : toCheckLookups) {
             collection.contains(i);
         }
     }
@@ -45,16 +45,16 @@ public class DataStructureTest {
         collection.removeAll(toAdd);
     }
 
-    private void runTestResults(final String name, Runnable toRun, int runs, long sampleSize,
-                                Runnable resetter) {
+    private void runTestResults(final String name, final Runnable toRun, final int runs, final long sampleSize,
+                                final Runnable resetter) {
         System.out.println(" ");
         System.out.println("Test Name: " + name);
         System.out.println("Trials: " + runs);
         System.out.println(" ");
-        long start = System.nanoTime();
+        final long start = System.nanoTime();
         long avg = 0;
         for (int index = 0; index < runs; index++) {
-            long test = Utils.getExecutionTimeNanos(toRun, 10, resetter);
+            final long test = Utils.getExecutionTimeNanos(toRun, 10, resetter);
             if (avg != 0) {
                 avg += test;
                 avg /= 2;
@@ -62,14 +62,14 @@ public class DataStructureTest {
                 avg += test;
             }
         }
-        long end = System.nanoTime();
-        double elapsed = (end - start) / 1000d / 1000d / 1000d;
+        final long end = System.nanoTime();
+        final double elapsed = (end - start) / 1000d / 1000d / 1000d;
         final double singleNanos = (double) avg / sampleSize;
         System.out.println("Average Time Per Operation: " + singleNanos + "ns");
         System.out.println("Test Execution Time: " + elapsed + "s");
     }
 
-    public void runTest(int runs) {
+    public void runTest(final int runs) {
         System.out.println("---- " + collection.getClass().getName() + " Test ----");
         runTestResults("Bulk Add", this::testAdd, runs, testSize, collection::clear);
         runTestResults("Bulk Remove", this::testRemove, runs, testSize,

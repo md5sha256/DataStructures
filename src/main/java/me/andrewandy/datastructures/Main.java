@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS) @Fork(value = 2) public class Main {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         final OptionsBuilder builder = new OptionsBuilder();
         final Options options = builder.timeUnit(TimeUnit.MILLISECONDS)
                                        .mode(Mode.SingleShotTime)
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
                                        .build();
         try {
             new Runner(options).run();
-        } catch (RunnerException ex) {
+        } catch (final RunnerException ex) {
             ex.printStackTrace();
         }
 

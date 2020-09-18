@@ -10,25 +10,25 @@ public class LinkedList<E> implements Collection<E> {
     private Node<E> last = start;
     private int size;
 
-    private static <E> void insertNode(Node<E> prev, Node<E> toInsert) {
-        Node<E> next = prev.next;
+    private static <E> void insertNode(final Node<E> prev, final Node<E> toInsert) {
+        final Node<E> next = prev.next;
         prev.next = toInsert;
         toInsert.next = next;
     }
 
-    @Override public void addAll(Collection<E> collection) {
-        for (E e : collection) {
+    @Override public void addAll(final Collection<E> collection) {
+        for (final E e : collection) {
             add(e);
         }
     }
 
-    @Override public void addAll(E[] iterable) {
-        for (E e : iterable) {
+    @Override public void addAll(final E[] iterable) {
+        for (final E e : iterable) {
             add(e);
         }
     }
 
-    public void add(E element) {
+    public void add(final E element) {
         if (last == start) {
             last = new Node<>(element);
             start.next = last;
@@ -38,24 +38,24 @@ public class LinkedList<E> implements Collection<E> {
         size++;
     }
 
-    @Override public void remove(E e) {
-        Iterator<E> iterator = iterator();
+    @Override public void remove(final E e) {
+        final Iterator<E> iterator = iterator();
         while (iterator.hasNext()) {
-            E next = iterator.next();
+            final E next = iterator.next();
             if (Objects.equals(e, next)) {
                 iterator.remove();
             }
         }
     }
 
-    @Override public void removeAll(Collection<E> collection) {
-        for (E e : collection) {
+    @Override public void removeAll(final Collection<E> collection) {
+        for (final E e : collection) {
             remove(e);
         }
     }
 
-    @Override public void removeAll(E[] iterable) {
-        for (E e : iterable) {
+    @Override public void removeAll(final E[] iterable) {
+        for (final E e : iterable) {
             remove(e);
         }
     }
@@ -71,7 +71,7 @@ public class LinkedList<E> implements Collection<E> {
         return this.size;
     }
 
-    @Override public boolean contains(E element) {
+    @Override public boolean contains(final E element) {
         /*
         Iterator<E> iterator = new NodeIterator();
         while (iterator.hasNext()) {
@@ -90,7 +90,7 @@ public class LinkedList<E> implements Collection<E> {
         return indexOf(element) != -1;
     }
 
-    public E get(int index) {
+    public E get(final int index) {
         if (index < 0 || index > size - 1) {
             throw new IndexOutOfBoundsException();
         }
@@ -106,7 +106,7 @@ public class LinkedList<E> implements Collection<E> {
         return current.get();
     }
 
-    public void add(int index, E element) {
+    public void add(final int index, final E element) {
         if (index + 1 == size) {
             add(element);
             return;
@@ -116,18 +116,18 @@ public class LinkedList<E> implements Collection<E> {
         size++;
     }
 
-    public void remove(int index) {
+    public void remove(final int index) {
         if (index == 0) {
             this.start = start.next;
         } else {
-            Node<E> prev = getNode(index - 1);
-            Node<E> toRemove = getNode(index);
+            final Node<E> prev = getNode(index - 1);
+            final Node<E> toRemove = getNode(index);
             prev.next = toRemove == null ? null : toRemove.next;
         }
         size--;
     }
 
-    public int indexOf(E element) {
+    public int indexOf(final E element) {
         if (this.size == 0) {
             return -1;
         }
@@ -151,7 +151,7 @@ public class LinkedList<E> implements Collection<E> {
         return index;
     }
 
-    private Node<E> getNode(int index) {
+    private Node<E> getNode(final int index) {
         if (index == 0) {
             return start;
         } else if (index + 1 == size) {
@@ -177,7 +177,7 @@ public class LinkedList<E> implements Collection<E> {
         Node<E> next;
         private E val;
 
-        public Node(E e) {
+        public Node(final E e) {
             set(e);
         }
 
@@ -189,7 +189,7 @@ public class LinkedList<E> implements Collection<E> {
             return val;
         }
 
-        public void set(E value) {
+        public void set(final E value) {
             this.val = value;
         }
 

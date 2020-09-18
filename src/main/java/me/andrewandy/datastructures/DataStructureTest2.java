@@ -34,7 +34,7 @@ public class DataStructureTest2 {
     }
 
     private void test() {
-        for (Integer i : toCheckLookups) {
+        for (final Integer i : toCheckLookups) {
             collection.contains(i);
         }
     }
@@ -43,7 +43,7 @@ public class DataStructureTest2 {
         return Utils.getExecutionTimeNanos(this::test, 50);
     }
 
-    public void runTest(int runs) {
+    public void runTest(final int runs) {
         System.out.println("---- " + collection.getClass().getName() + " Test ----");
         System.out.println(" ");
         System.out.println("Number Range: " + testSize);
@@ -57,7 +57,7 @@ public class DataStructureTest2 {
         final long end = System.nanoTime();
         int index = 0;
         long avg = 0;
-        for (long totalNanos : nanos) {
+        for (final long totalNanos : nanos) {
             index++;
             if (avg != 0) {
                 avg += totalNanos;

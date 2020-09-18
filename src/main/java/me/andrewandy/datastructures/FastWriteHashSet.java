@@ -11,7 +11,7 @@ public class FastWriteHashSet<T> implements Collection<T> {
     private int size;
 
 
-    public FastWriteHashSet(int bucketSize) {
+    public FastWriteHashSet(final int bucketSize) {
         if (bucketSize < 1) {
             throw new IllegalArgumentException("Invalid initial capacity: " + bucketSize);
         }
@@ -22,48 +22,48 @@ public class FastWriteHashSet<T> implements Collection<T> {
         this.arrayLen = bucketSize;
     }
 
-    private static int hash(Object o) {
+    private static int hash(final Object o) {
         final int h = o.hashCode();
         return h < 0 ? -h : h;
     }
 
-    public Node<T> getNode(T object) {
+    public Node<T> getNode(final T object) {
         if (object == null) {
             return null;
         }
         return this.nodes[hash(object) % arrayLen];
     }
 
-    public void addAll(Collection<T> objects) {
+    public void addAll(final Collection<T> objects) {
         if (objects.size() == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             add(t);
         }
     }
 
-    @Override public void addAll(T[] objects) {
+    @Override public void addAll(final T[] objects) {
         if (objects.length == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             add(t);
         }
     }
 
-    public void add(T object) {
+    public void add(final T object) {
         if (object == null) {
             throw new IllegalArgumentException("Does not support null types!");
         }
-        Node<T> node = getNode(object);
+        final Node<T> node = getNode(object);
         if (!node.chain.contains(object)) {
             node.chain.add(object);
             size++;
         }
     }
 
-    public void remove(T object) {
+    public void remove(final T object) {
         if (object == null || this.size == 0) {
             return;
         }
@@ -74,20 +74,20 @@ public class FastWriteHashSet<T> implements Collection<T> {
         }
     }
 
-    @Override public void removeAll(Collection<T> objects) {
+    @Override public void removeAll(final Collection<T> objects) {
         if (objects.size() == 0 || this.size == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             remove(t);
         }
     }
 
-    @Override public void removeAll(T[] objects) {
+    @Override public void removeAll(final T[] objects) {
         if (objects.length == 0 || this.size == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             if (t == null) {
                 continue;
             }
@@ -99,7 +99,7 @@ public class FastWriteHashSet<T> implements Collection<T> {
         if (this.size == 0) {
             return;
         }
-        for (Node<T> node : this.nodes) {
+        for (final Node<T> node : this.nodes) {
             node.chain.clear();
         }
         this.size = 0;
@@ -109,7 +109,7 @@ public class FastWriteHashSet<T> implements Collection<T> {
         return this.size;
     }
 
-    public boolean contains(T object) {
+    public boolean contains(final T object) {
         if (object == null || this.size == 0) {
             return false;
         }
@@ -129,12 +129,12 @@ public class FastWriteHashSet<T> implements Collection<T> {
             return chain.size() == 0 ? chain.iterator().next().hashCode() : 0;
         }
 
-        @Override public boolean equals(Object o) {
+        @Override public boolean equals(final Object o) {
             if (this == o)
                 return true;
             if (o == null || getClass() != o.getClass())
                 return false;
-            Node<?> node = (Node<?>) o;
+            final Node<?> node = (Node<?>) o;
             return Objects.equals(chain, node.chain);
         }
     }
@@ -172,7 +172,7 @@ public class FastWriteHashSet<T> implements Collection<T> {
             if (this.index == FastWriteHashSet.this.arrayLen - 1) {
                 return null;
             }
-            Node<T> node = FastWriteHashSet.this.nodes[index];
+            final Node<T> node = FastWriteHashSet.this.nodes[index];
             if (node.chain.size() == 0 || this.bucketIndex > node.chain.size()) {
                 index += 1;
                 bucketIndex = 0;

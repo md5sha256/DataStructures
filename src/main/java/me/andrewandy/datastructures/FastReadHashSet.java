@@ -16,7 +16,7 @@ public class FastReadHashSet<T> implements Collection<T> {
         this(10, 0.75f);
     }
 
-    public FastReadHashSet(int initialCap, float loadCapacity) {
+    public FastReadHashSet(final int initialCap, final float loadCapacity) {
         if (loadCapacity < 0 || loadCapacity > 1) {
             throw new IllegalArgumentException("Invalid load capacity!");
         }
@@ -24,16 +24,16 @@ public class FastReadHashSet<T> implements Collection<T> {
             throw new IllegalArgumentException("Invalid initial capacity!");
         }
         this.nodes = new Node[initialCap];
-        this.arrayLen = nodes.length;
+        this.arrayLen = initialCap;
         this.loadCapacity = loadCapacity;
     }
 
-    private static int hash(Object o) {
+    private static int hash(final Object o) {
         final int h = o.hashCode();
         return h < 0 ? -h : h;
     }
 
-    public Node<T> getNode(T object) {
+    public Node<T> getNode(final T object) {
         if (object == null) {
             return null;
         }
@@ -46,7 +46,7 @@ public class FastReadHashSet<T> implements Collection<T> {
         return this.nodes[hash(object) % arrayLen];
     }
 
-    private void add(T object, boolean resize) {
+    private void add(final T object, final boolean resize) {
         if (object == null) {
             throw new IllegalArgumentException("Does not support null types!");
         }
@@ -55,63 +55,62 @@ public class FastReadHashSet<T> implements Collection<T> {
         }
         if (resize) {
             this.nodes = resize(1);
-            this.arrayLen += 1;
             checkAndRehash();
         }
         Node<T> node = getNode(object);
         if (node == null) {
             node = new Node<>();
+            this.nodes[hash(object.hashCode()) % arrayLen] = node;
         }
         node.chain.add(object);
-        this.nodes[hash(object.hashCode()) % arrayLen] = node;
         size++;
     }
 
-    public void addAll(Collection<T> objects) {
+    public void addAll(final Collection<T> objects) {
         if (objects.size() == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             add(t, false);
         }
-        Node<T>[] arr = resize(objects.size());
+        final Node<T>[] arr = resize(objects.size());
         rehash(arr);
     }
 
-    @Override public void addAll(T[] objects) {
+    @Override public void addAll(final T[] objects) {
         if (objects.length == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             add(t, false);
         }
-        Node<T>[] arr = resize(objects.length);
+        final Node<T>[] arr = resize(objects.length);
         rehash(arr);
     }
 
-    public void add(T object) {
+    public void add(final T object) {
+        add(object, true);
     }
 
-    public void remove(T object) {
+    public void remove(final T object) {
         remove(object, true);
-        ;
     }
 
-    @Override public void removeAll(Collection<T> objects) {
+    @Override public void removeAll(final Collection<T> objects) {
         if (objects.size() == 0 || this.size == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             remove(t, false);
         }
         checkAndRehash();
     }
 
-    @Override public void removeAll(T[] objects) {
+    @Override public void removeAll(final T[] objects) {
         if (objects.length == 0 || this.size == 0) {
             return;
         }
-        for (T t : objects) {
+        for (final T t : objects) {
             remove(t, false);
         }
         checkAndRehash();
@@ -127,7 +126,7 @@ public class FastReadHashSet<T> implements Collection<T> {
         return this.size;
     }
 
-    public boolean contains(T object) {
+    public boolean contains(final T object) {
         if (object == null || this.size == 0) {
             return false;
         }
@@ -135,7 +134,7 @@ public class FastReadHashSet<T> implements Collection<T> {
         return node != null && node.chain.contains(object);
     }
 
-    private void remove(T object, boolean rehash) {
+    private void remove(final T object, final boolean rehash) {
         if (object == null) {
             return;
         }
@@ -155,7 +154,7 @@ public class FastReadHashSet<T> implements Collection<T> {
     private void checkAndRehash() {
         final int resize = calculateResizeAmount();
         if (Math.abs(resize) >= (1 - loadCapacity) * this.size) {
-            Node<T>[] nodes = resize(resize);
+            final Node<T>[] nodes = resize(resize);
             rehash(nodes);
         }
     }
@@ -165,33 +164,33 @@ public class FastReadHashSet<T> implements Collection<T> {
     }
 
     private int calculateResizeAmount() {
-        int len = arrayLen;
+        final int len = arrayLen;
         int nulls = 0;
-        for (Node<T> node : this.nodes) {
+        for (final Node<T> node : this.nodes) {
             if (node == null) {
                 nulls++;
             }
         }
-        int cap = len - nulls;
-        int toResize = (int) ((len * loadCapacity) - cap);
+        final int cap = len - nulls;
+        final int toResize = (int) ((len * loadCapacity) - cap);
         return toResize < 0 ? -1 : 1;
     }
 
     private Node<T>[] resize(int amount) {
-        Node<T>[] prev = this.nodes;
+        final Node<T>[] prev = this.nodes;
         amount += calculateResizeAmount();
         this.nodes = new Node[arrayLen + amount];
-        this.arrayLen = arrayLen + amount;
+        this.arrayLen = this.nodes.length;
         return prev;
     }
 
-    private void rehash(Node<T>[] elements, int... toExclude) {
+    private void rehash(final Node<T>[] elements, final int... toExclude) {
         if (toExclude == null && elements.length > this.nodes.length) {
             throw new IllegalArgumentException("Cannot rehash larger array!");
         }
         if (toExclude != null) {
             int i = 0;
-            for (Node<T> node : elements) {
+            for (final Node<T> node : elements) {
                 if (Arrays.binarySearch(toExclude, i++) != -1) {
                     continue;
                 }
@@ -203,7 +202,7 @@ public class FastReadHashSet<T> implements Collection<T> {
                 this.nodes[index] = node;
             }
         } else {
-            for (Node<T> node : elements) {
+            for (final Node<T> node : elements) {
                 if (node == null) {
                     continue;
                 }
@@ -223,12 +222,12 @@ public class FastReadHashSet<T> implements Collection<T> {
             return chain.size() == 0 ? chain.iterator().next().hashCode() : 0;
         }
 
-        @Override public boolean equals(Object o) {
+        @Override public boolean equals(final Object o) {
             if (this == o)
                 return true;
             if (o == null || getClass() != o.getClass())
                 return false;
-            Node<?> node = (Node<?>) o;
+            final Node<?> node = (Node<?>) o;
             return Objects.equals(chain, node.chain);
         }
     }
