@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
                                        .mode(Mode.SingleShotTime)
                                        .warmupMode(WarmupMode.INDI)
                                        .forks(2)
-                                       .warmupIterations(3)
-                                       .measurementIterations(5)
+                                       .warmupIterations(2)
+                                       .measurementIterations(3)
                                        .jvmArgs("-Xint")
                                        .include(BaseBenchmark.class.getSimpleName())
                                        //.include(JavaLinkedListBenchmark.class.getSimpleName())
@@ -41,10 +41,15 @@ import java.util.concurrent.TimeUnit;
 
     @State(Scope.Benchmark) public static class GlobalValues {
 
-        @Param({"100", "1000", "10000", "100000", "1000000"}) public int size;
+        @Param({"10", "100", "1000", "10000", "100000"}) public int collectionSize;
+        @Param ("1000") public int sampleSize;
 
-        public int size() {
-            return size;
+        public int collectionSize() {
+            return collectionSize;
+        }
+
+        public int sampleSize() {
+            return sampleSize;
         }
 
         @Param({"LinkedList", "DynamicHashSet", "FixedSizeHashSet"})
@@ -55,9 +60,9 @@ import java.util.concurrent.TimeUnit;
                 case "LinkedList":
                     return new LinkedList<>();
                 case "DynamicHashSet":
-                    return new DynamicHashSet<>(size, 0.75f);
+                    return new DynamicHashSet<>(collectionSize, 0.75f);
                 case "FixedSizeHashSet":
-                    return new FixedSizeHashSet<>(size);
+                    return new FixedSizeHashSet<>(collectionSize);
                 default:
                     throw new IllegalArgumentException("Unknown Collection: " + collection);
             }

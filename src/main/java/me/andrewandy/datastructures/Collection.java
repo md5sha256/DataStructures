@@ -10,6 +10,8 @@ public interface Collection<T> extends Iterable<T> {
 
     boolean remove(T t);
 
+    T remove();
+
     void removeAll(Collection<T> collection);
 
     void removeAll(T[] iterable);

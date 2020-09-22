@@ -76,6 +76,7 @@ public class DynamicHashSet<T> implements Collection<T> {
         rehash(arr);
     }
 
+
     @Override public void addAll(final T[] objects) {
         if (objects.length == 0) {
             return;
@@ -94,6 +95,23 @@ public class DynamicHashSet<T> implements Collection<T> {
 
     public boolean remove(final T object) {
         return remove(object, true);
+    }
+
+    @Override
+    public T remove() {
+        if (this.size == 0) {
+            throw new NoSuchElementException();
+        }
+        for (Node<T> node : nodes) {
+            if (node == null) {
+                continue;
+            }
+            if (node.chain.size() != 0) {
+                return node.chain.remove();
+            }
+
+        }
+        throw new NoSuchElementException();
     }
 
     @Override public void removeAll(final Collection<T> objects) {
@@ -134,11 +152,8 @@ public class DynamicHashSet<T> implements Collection<T> {
     }
 
     private boolean remove(final T object, final boolean rehash) {
-        if (object == null) {
-            return false;
-        }
         final Node<T> node = getNode(object);
-        if (!node.chain.remove(object)) {
+        if (node == null || !node.chain.remove(object)) {
             return false;
         }
         size--;

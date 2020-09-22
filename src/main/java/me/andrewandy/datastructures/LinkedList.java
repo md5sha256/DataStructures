@@ -34,18 +34,45 @@ public class LinkedList<E> implements Collection<E> {
             start.next = last;
         } else {
             last.next = new Node<>(element);
+            this.last = last.next;
         }
         size++;
     }
 
+    @Override
+    public E remove() {
+        if (this.size == 0) {
+            throw new NoSuchElementException();
+        }
+        E obj = get(0);
+        remove(0);
+        return obj;
+    }
+
     @Override public boolean remove(final E e) {
-        final Iterator<E> iterator = iterator();
+        if (this.size == 0) {
+            return false;
+        }
+        Node<E> node = start;
+        Node<E> prev = node;
         boolean mod = false;
-        while (iterator.hasNext()) {
-            final E next = iterator.next();
-            if (Objects.equals(e, next)) {
-                iterator.remove();
-                mod = true;
+        if (e == null) {
+            while (node != null) {
+                if (node.val == null) {
+                    prev.next = node.next;
+                    mod = true;
+                }
+                prev = node;
+                node = node.next;
+            }
+        } else {
+            while (node != null) {
+                if (e.equals(node.val)) {
+                    prev.next = node.next;
+                    mod = true;
+                }
+                prev = node;
+                node = node.next;
             }
         }
         return mod;
@@ -121,7 +148,13 @@ public class LinkedList<E> implements Collection<E> {
 
     public void remove(final int index) {
         if (index == 0) {
-            this.start = start.next;
+           if (this.start.next == null) {
+               this.last = this.start;
+               this.start.val = null;
+               this.size = 0;
+           } else {
+               this.start = this.start.next;
+           }
         } else {
             final Node<E> prev = getNode(index - 1);
             final Node<E> toRemove = getNode(index);
