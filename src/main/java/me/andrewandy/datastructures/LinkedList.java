@@ -38,14 +38,17 @@ public class LinkedList<E> implements Collection<E> {
         size++;
     }
 
-    @Override public void remove(final E e) {
+    @Override public boolean remove(final E e) {
         final Iterator<E> iterator = iterator();
+        boolean mod = false;
         while (iterator.hasNext()) {
             final E next = iterator.next();
             if (Objects.equals(e, next)) {
                 iterator.remove();
+                mod = true;
             }
         }
+        return mod;
     }
 
     @Override public void removeAll(final Collection<E> collection) {

@@ -8,7 +8,7 @@ public interface Collection<T> extends Iterable<T> {
 
     void add(T t);
 
-    void remove(T t);
+    boolean remove(T t);
 
     void removeAll(Collection<T> collection);
 

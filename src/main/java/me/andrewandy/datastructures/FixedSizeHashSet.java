@@ -4,14 +4,14 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class FastWriteHashSet<T> implements Collection<T> {
+public class FixedSizeHashSet<T> implements Collection<T> {
 
     private final Node<T>[] nodes;
     private final int arrayLen;
     private int size;
 
 
-    public FastWriteHashSet(final int bucketSize) {
+    public FixedSizeHashSet(final int bucketSize) {
         if (bucketSize < 1) {
             throw new IllegalArgumentException("Invalid initial capacity: " + bucketSize);
         }
@@ -63,15 +63,12 @@ public class FastWriteHashSet<T> implements Collection<T> {
         }
     }
 
-    public void remove(final T object) {
+    public boolean remove(final T object) {
         if (object == null || this.size == 0) {
-            return;
+            return false;
         }
         final Node<T> node = getNode(object);
-        if (node.chain.contains(object)) {
-            node.chain.remove(object);
-            size--;
-        }
+        return node.chain.remove(object);
     }
 
     @Override public void removeAll(final Collection<T> objects) {
@@ -163,16 +160,16 @@ public class FastWriteHashSet<T> implements Collection<T> {
             if (removed) {
                 throw new NoSuchElementException();
             }
-            FastWriteHashSet.this.nodes[index].chain.remove(bucketIndex);
+            FixedSizeHashSet.this.nodes[index].chain.remove(bucketIndex);
             size--;
             removed = true;
         }
 
         private Node<T> getNextBucket() {
-            if (this.index == FastWriteHashSet.this.arrayLen - 1) {
+            if (this.index == FixedSizeHashSet.this.arrayLen - 1) {
                 return null;
             }
-            final Node<T> node = FastWriteHashSet.this.nodes[index];
+            final Node<T> node = FixedSizeHashSet.this.nodes[index];
             if (node.chain.size() == 0 || this.bucketIndex > node.chain.size()) {
                 index += 1;
                 bucketIndex = 0;

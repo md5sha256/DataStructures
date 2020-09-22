@@ -5,18 +5,17 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class FastReadHashSet<T> implements Collection<T> {
+public class DynamicHashSet<T> implements Collection<T> {
 
     private final float loadCapacity;
     private Node<T>[] nodes;
     private int size;
-    private int arrayLen;
 
-    public FastReadHashSet() {
+    public DynamicHashSet() {
         this(10, 0.75f);
     }
 
-    public FastReadHashSet(final int initialCap, final float loadCapacity) {
+    public DynamicHashSet(final int initialCap, final float loadCapacity) {
         if (loadCapacity < 0 || loadCapacity > 1) {
             throw new IllegalArgumentException("Invalid load capacity!");
         }
@@ -24,7 +23,6 @@ public class FastReadHashSet<T> implements Collection<T> {
             throw new IllegalArgumentException("Invalid initial capacity!");
         }
         this.nodes = new Node[initialCap];
-        this.arrayLen = initialCap;
         this.loadCapacity = loadCapacity;
     }
 
@@ -43,7 +41,7 @@ public class FastReadHashSet<T> implements Collection<T> {
         if (this.size == 1) {
             return this.nodes[0];
         }
-        return this.nodes[hash(object) % arrayLen];
+        return this.nodes[hash(object) % this.nodes.length];
     }
 
     private void add(final T object, final boolean resize) {
@@ -60,7 +58,7 @@ public class FastReadHashSet<T> implements Collection<T> {
         Node<T> node = getNode(object);
         if (node == null) {
             node = new Node<>();
-            this.nodes[hash(object.hashCode()) % arrayLen] = node;
+            this.nodes[hash(object.hashCode()) % this.nodes.length] = node;
         }
         node.chain.add(object);
         size++;
@@ -70,10 +68,11 @@ public class FastReadHashSet<T> implements Collection<T> {
         if (objects.size() == 0) {
             return;
         }
+        final int size = this.size;
         for (final T t : objects) {
             add(t, false);
         }
-        final Node<T>[] arr = resize(objects.size());
+        final Node<T>[] arr = resize(this.size - size);
         rehash(arr);
     }
 
@@ -81,10 +80,11 @@ public class FastReadHashSet<T> implements Collection<T> {
         if (objects.length == 0) {
             return;
         }
+        final int size = this.size;
         for (final T t : objects) {
             add(t, false);
         }
-        final Node<T>[] arr = resize(objects.length);
+        final Node<T>[] arr = resize(this.size - size);
         rehash(arr);
     }
 
@@ -92,8 +92,8 @@ public class FastReadHashSet<T> implements Collection<T> {
         add(object, true);
     }
 
-    public void remove(final T object) {
-        remove(object, true);
+    public boolean remove(final T object) {
+        return remove(object, true);
     }
 
     @Override public void removeAll(final Collection<T> objects) {
@@ -119,7 +119,6 @@ public class FastReadHashSet<T> implements Collection<T> {
     @Override public void clear() {
         this.nodes = new Node[(int) Math.ceil(this.loadCapacity)];
         this.size = 0;
-        this.arrayLen = this.nodes.length;
     }
 
     @Override public int size() {
@@ -130,25 +129,26 @@ public class FastReadHashSet<T> implements Collection<T> {
         if (object == null || this.size == 0) {
             return false;
         }
-        final Node<T> node = this.nodes[hash(object) % arrayLen];
+        final Node<T> node = this.nodes[hash(object) % this.nodes.length];
         return node != null && node.chain.contains(object);
     }
 
-    private void remove(final T object, final boolean rehash) {
+    private boolean remove(final T object, final boolean rehash) {
         if (object == null) {
-            return;
+            return false;
         }
         final Node<T> node = getNode(object);
-        if (node != null) {
-            node.chain.remove(object);
-            if (node.chain.size() == 0) {
-                this.nodes[hash(object.hashCode()) % arrayLen] = null;
-            }
-            size--;
-            if (rehash) {
-                checkAndRehash();
-            }
+        if (!node.chain.remove(object)) {
+            return false;
         }
+        size--;
+        if (node.chain.size() == 0) {
+            this.nodes[hash(object.hashCode()) % this.nodes.length] = null;
+        }
+        if (rehash) {
+            checkAndRehash();
+        }
+        return true;
     }
 
     private void checkAndRehash() {
@@ -164,7 +164,7 @@ public class FastReadHashSet<T> implements Collection<T> {
     }
 
     private int calculateResizeAmount() {
-        final int len = arrayLen;
+        final int len = this.nodes.length;
         int nulls = 0;
         for (final Node<T> node : this.nodes) {
             if (node == null) {
@@ -179,8 +179,7 @@ public class FastReadHashSet<T> implements Collection<T> {
     private Node<T>[] resize(int amount) {
         final Node<T>[] prev = this.nodes;
         amount += calculateResizeAmount();
-        this.nodes = new Node[arrayLen + amount];
-        this.arrayLen = this.nodes.length;
+        this.nodes = new Node[this.nodes.length + amount];
         return prev;
     }
 
@@ -197,7 +196,7 @@ public class FastReadHashSet<T> implements Collection<T> {
                 if (node == null) {
                     continue;
                 }
-                int index = node.hashCode() % arrayLen;
+                int index = node.hashCode() % this.nodes.length;
                 index = index < 0 ? -index : index;
                 this.nodes[index] = node;
             }
@@ -206,7 +205,7 @@ public class FastReadHashSet<T> implements Collection<T> {
                 if (node == null) {
                     continue;
                 }
-                int index = node.hashCode() % arrayLen;
+                int index = node.hashCode() % this.nodes.length;
                 index = index < 0 ? -index : index;
                 this.nodes[index] = node;
             }
@@ -251,14 +250,14 @@ public class FastReadHashSet<T> implements Collection<T> {
         }
 
         @Override public void remove() {
-            FastReadHashSet.this.remove(FastReadHashSet.this.nodes[index].chain.get(bucketIndex));
+            DynamicHashSet.this.remove(DynamicHashSet.this.nodes[index].chain.get(bucketIndex));
         }
 
         private Node<T> getNextBucket() {
-            if (this.index == FastReadHashSet.this.nodes.length - 1) {
+            if (this.index == DynamicHashSet.this.nodes.length - 1) {
                 return null;
             }
-            Node<T> node = FastReadHashSet.this.nodes[index];
+            Node<T> node = DynamicHashSet.this.nodes[index];
             if (node == null) {
                 ++index;
                 bucketIndex = 0;
@@ -267,7 +266,7 @@ public class FastReadHashSet<T> implements Collection<T> {
             if (bucketIndex == node.chain.size() - 1) {
                 ++index;
                 bucketIndex = 0;
-                node = FastReadHashSet.this.nodes[index];
+                node = DynamicHashSet.this.nodes[index];
             }
             return node == null ? getNextBucket() : node;
         }

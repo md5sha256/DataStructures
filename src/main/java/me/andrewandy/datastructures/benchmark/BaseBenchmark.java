@@ -1,7 +1,6 @@
 package me.andrewandy.datastructures.benchmark;
 
 import me.andrewandy.datastructures.Collection;
-import me.andrewandy.datastructures.FastWriteHashSet;
 import me.andrewandy.datastructures.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.CompilerControl;
@@ -15,33 +14,22 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @CompilerControl(CompilerControl.Mode.EXCLUDE) @OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class FastWriteHSBenchmark {
+public class BaseBenchmark {
 
-    @Benchmark public void testSingularAdd(final AddState state) {
-        for (final Integer i : state.sample) {
-            state.collection.add(i);
-        }
-    }
-
-    @Benchmark public void testBulkAdd(final AddState state) {
+    @Benchmark public void testAdd(final AddState state) {
         state.collection.addAll(state.sample);
     }
 
-    @Benchmark public void testSingularRemove(final RemovalState state) {
-        for (final Integer i : state.sample) {
-            state.collection.add(i);
-        }
-    }
-
-    @Benchmark public void testBulkRemove(final RemovalState state) {
+    @Benchmark public void testRemove(final RemovalState state) {
         state.collection.removeAll(state.sample);
     }
 
     @Benchmark public void testContains(final ContainsState state) {
-        for (final Integer i : state.sample) {
+        for (final Integer i : state.containsSample) {
             state.collection.contains(i);
         }
     }
+
 
     @State(Scope.Benchmark) public static class AddState {
         public Integer[] sample;
@@ -51,7 +39,7 @@ public class FastWriteHSBenchmark {
         }
 
         @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
-            this.collection = new FastWriteHashSet<>(values.size());
+            this.collection = values.newCollection();
             this.sample = new Integer[values.size()];
             final Random random = new Random();
             for (int index = 0; index < values.size(); index++) {
@@ -79,7 +67,7 @@ public class FastWriteHSBenchmark {
         }
 
         @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
-            this.collection = new FastWriteHashSet<>(values.size());
+            this.collection = values.newCollection();
             this.sample = new Integer[values.size()];
             final Random random = new Random();
             for (int index = 0; index < values.size(); index++) {
@@ -99,25 +87,20 @@ public class FastWriteHSBenchmark {
 
 
     @State(Scope.Benchmark) public static class ContainsState {
-        public Integer[] sample;
+        public Integer[] containsSample;
         public Collection<Integer> collection;
-        public int initialAdded, lastAdded;
 
         public ContainsState() {
 
         }
 
         @Setup(Level.Trial) public void init(final Main.GlobalValues values) {
-            this.collection = new FastWriteHashSet<>(values.size());
-            this.sample = new Integer[values.size()];
+            this.collection = values.newCollection();
+            this.containsSample = new Integer[100000];
             final Random random = new Random();
-            final int i = random.nextInt();
-            initialAdded = i;
-            sample[0] = i;
-            for (int index = 1; index < values.size(); index++) {
-                sample[index] = random.nextInt();
+            for (int index = 0; index < this.containsSample.length; index++) {
+                containsSample[index] = random.nextInt();
             }
-            lastAdded = sample[sample.length - 1];
         }
 
         public final void resetEmpty() {
@@ -126,7 +109,7 @@ public class FastWriteHSBenchmark {
 
         public final void resetFilled() {
             this.collection.clear();
-            this.collection.addAll(sample);
+            this.collection.addAll(containsSample);
         }
     }
 

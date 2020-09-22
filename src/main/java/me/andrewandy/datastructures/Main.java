@@ -1,8 +1,6 @@
 package me.andrewandy.datastructures;
 
-import me.andrewandy.datastructures.benchmark.FastReadHSBenchmark;
-import me.andrewandy.datastructures.benchmark.FastWriteHSBenchmark;
-import me.andrewandy.datastructures.benchmark.LinkedListBenchmark;
+import me.andrewandy.datastructures.benchmark.BaseBenchmark;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -13,6 +11,7 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.WarmupMode;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,13 +21,14 @@ import java.util.concurrent.TimeUnit;
         final OptionsBuilder builder = new OptionsBuilder();
         final Options options = builder.timeUnit(TimeUnit.MILLISECONDS)
                                        .mode(Mode.SingleShotTime)
+                                       .warmupMode(WarmupMode.INDI)
                                        .forks(2)
-                                       .warmupIterations(1)
+                                       .warmupIterations(3)
                                        .measurementIterations(5)
                                        .jvmArgs("-Xint")
-                                       .include(LinkedListBenchmark.class.getSimpleName())
-                                       .include(FastReadHSBenchmark.class.getSimpleName())
-                                       .include(FastWriteHSBenchmark.class.getSimpleName())
+                                       .include(BaseBenchmark.class.getSimpleName())
+                                       //.include(JavaLinkedListBenchmark.class.getSimpleName())
+                                      //.include(JavaHashSetBenchmark.class.getSimpleName())
                                        .build();
         try {
             new Runner(options).run();
@@ -45,6 +45,22 @@ import java.util.concurrent.TimeUnit;
 
         public int size() {
             return size;
+        }
+
+        @Param({"LinkedList", "DynamicHashSet", "FixedSizeHashSet"})
+        public String collection;
+
+        public <T> Collection<T> newCollection() {
+            switch (collection) {
+                case "LinkedList":
+                    return new LinkedList<>();
+                case "DynamicHashSet":
+                    return new DynamicHashSet<>(size, 0.75f);
+                case "FixedSizeHashSet":
+                    return new FixedSizeHashSet<>(size);
+                default:
+                    throw new IllegalArgumentException("Unknown Collection: " + collection);
+            }
         }
     }
 
