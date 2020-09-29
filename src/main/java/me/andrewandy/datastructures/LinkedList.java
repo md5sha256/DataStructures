@@ -39,16 +39,6 @@ public class LinkedList<E> implements Collection<E> {
         size++;
     }
 
-    @Override
-    public E remove() {
-        if (this.size == 0) {
-            throw new NoSuchElementException();
-        }
-        E obj = get(0);
-        remove(0);
-        return obj;
-    }
-
     @Override public boolean remove(final E e) {
         if (this.size == 0) {
             return false;
@@ -168,23 +158,23 @@ public class LinkedList<E> implements Collection<E> {
             return -1;
         }
         final Iterator<E> iterator = new NodeIterator();
-        int index = -1;
+        int index = 0;
         if (element == null) {
             while (iterator.hasNext()) {
-                index++;
                 if (iterator.next() == null) {
                     return index;
                 }
+                index++;
             }
         } else {
             while (iterator.hasNext()) {
-                index++;
-                if (iterator.next().equals(element)) {
+                if (element.equals(iterator.next())) {
                     return index;
                 }
+                index++;
             }
         }
-        return index;
+        return -1;
     }
 
     private Node<E> getNode(final int index) {
@@ -242,6 +232,7 @@ public class LinkedList<E> implements Collection<E> {
 
         public NodeIterator() {
             this.current = start;
+            this.prev = start;
         }
 
         Node<E> getCurrent() {
@@ -265,9 +256,7 @@ public class LinkedList<E> implements Collection<E> {
             if (current == null) {
                 throw new NoSuchElementException();
             }
-            if (prev != null) {
-                prev.next = current.next;
-            }
+            prev.next = current.next;
         }
     }
 

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
                                        .warmupMode(WarmupMode.INDI)
                                        .forks(2)
                                        .warmupIterations(2)
-                                       .measurementIterations(3)
+                                       .measurementIterations(5)
                                        .jvmArgs("-Xint")
                                        .include(BaseBenchmark.class.getSimpleName())
                                        //.include(JavaLinkedListBenchmark.class.getSimpleName())

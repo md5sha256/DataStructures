@@ -97,23 +97,6 @@ public class DynamicHashSet<T> implements Collection<T> {
         return remove(object, true);
     }
 
-    @Override
-    public T remove() {
-        if (this.size == 0) {
-            throw new NoSuchElementException();
-        }
-        for (Node<T> node : nodes) {
-            if (node == null) {
-                continue;
-            }
-            if (node.chain.size() != 0) {
-                return node.chain.remove();
-            }
-
-        }
-        throw new NoSuchElementException();
-    }
-
     @Override public void removeAll(final Collection<T> objects) {
         if (objects.size() == 0 || this.size == 0) {
             return;

@@ -18,16 +18,9 @@ import java.util.concurrent.TimeUnit;
 public class BaseBenchmark {
 
     @Benchmark
-    public void tailAdd(final AddRemoveState state) {
+    public void testAdd(final AddRemoveState state) {
         for (Integer i : state.dynamicSample) {
             state.collection.add(i);
-        }
-    }
-
-    @Benchmark
-    public void tailRemove(final AddRemoveState state) {
-        while (state.collection.size() != 0) {
-            state.collection.remove();
         }
     }
 
@@ -40,7 +33,7 @@ public class BaseBenchmark {
 
     @Benchmark
     public void testContains(final ContainsState state) {
-        for (final Integer i : state.staticSample) {
+        for (final Integer i : state.dynamicSample) {
             state.collection.contains(i);
         }
     }
