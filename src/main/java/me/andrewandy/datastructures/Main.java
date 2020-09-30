@@ -1,6 +1,7 @@
 package me.andrewandy.datastructures;
 
 import me.andrewandy.datastructures.benchmark.BaseBenchmark;
+import me.andrewandy.datastructures.benchmark.StdLibBenchmark;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -13,6 +14,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.WarmupMode;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @OutputTimeUnit(TimeUnit.MILLISECONDS) @Fork(value = 2) public class Main {
@@ -26,9 +28,8 @@ import java.util.concurrent.TimeUnit;
                                        .warmupIterations(2)
                                        .measurementIterations(5)
                                        .jvmArgs("-Xint")
-                                       .include(BaseBenchmark.class.getSimpleName())
-                                       //.include(JavaLinkedListBenchmark.class.getSimpleName())
-                                      //.include(JavaHashSetBenchmark.class.getSimpleName())
+                                       //.include(BaseBenchmark.class.getSimpleName())
+                                       .include(StdLibBenchmark.class.getSimpleName())
                                        .build();
         try {
             new Runner(options).run();
@@ -63,6 +64,34 @@ import java.util.concurrent.TimeUnit;
                     return new DynamicHashSet<>(collectionSize, 0.75f);
                 case "FixedSizeHashSet":
                     return new FixedSizeHashSet<>(collectionSize);
+                default:
+                    throw new IllegalArgumentException("Unknown Collection: " + collection);
+            }
+        }
+    }
+
+    @State(Scope.Benchmark) public static class StdLibValues {
+
+        @Param({"10", "100", "1000", "10000", "100000"}) public int collectionSize;
+        @Param ("1000") public int sampleSize;
+
+        public int collectionSize() {
+            return collectionSize;
+        }
+
+        public int sampleSize() {
+            return sampleSize;
+        }
+
+        @Param({"ArrayList"})
+        public String collection;
+
+        public <T> java.util.Collection<T> newCollection() {
+            switch (collection) {
+                case "LinkedList":
+                    return new java.util.LinkedList<>();
+                case "ArrayList":
+                    return new ArrayList<>(collectionSize());
                 default:
                     throw new IllegalArgumentException("Unknown Collection: " + collection);
             }
