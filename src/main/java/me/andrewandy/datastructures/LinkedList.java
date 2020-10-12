@@ -1,5 +1,6 @@
 package me.andrewandy.datastructures;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -51,6 +52,7 @@ public class LinkedList<E> implements Collection<E> {
                 if (node.val == null) {
                     prev.next = node.next;
                     mod = true;
+                    this.size--;
                 }
                 prev = node;
                 node = node.next;
@@ -60,6 +62,7 @@ public class LinkedList<E> implements Collection<E> {
                 if (e.equals(node.val)) {
                     prev.next = node.next;
                     mod = true;
+                    this.size--;
                 }
                 prev = node;
                 node = node.next;
@@ -116,6 +119,8 @@ public class LinkedList<E> implements Collection<E> {
         }
         if (index == this.size - 1) {
             return last.get();
+        } else if (index == 0) {
+            return start.next.get();
         }
         int i = 0;
         Node<E> current = start;
@@ -260,4 +265,12 @@ public class LinkedList<E> implements Collection<E> {
         }
     }
 
+    @Override public String toString() {
+       final Object[] arr = new Object[this.size];
+       int i = 0;
+       for (E e : this) {
+           arr[i++] = e;
+       }
+       return Arrays.toString(arr);
+    }
 }

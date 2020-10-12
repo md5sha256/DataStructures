@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
                                        .warmupIterations(2)
                                        .measurementIterations(5)
                                        .jvmArgs("-Xint")
-                                       //.include(BaseBenchmark.class.getSimpleName())
-                                       .include(StdLibBenchmark.class.getSimpleName())
+                                       .include(BaseBenchmark.class.getSimpleName())
+                                       //.include(StdLibBenchmark.class.getSimpleName())
                                        .build();
         try {
             new Runner(options).run();

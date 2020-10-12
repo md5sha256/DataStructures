@@ -38,9 +38,6 @@ public class DynamicHashSet<T> implements Collection<T> {
         if (this.size == 0) {
             return null;
         }
-        if (this.size == 1) {
-            return this.nodes[0];
-        }
         return this.nodes[hash(object) % this.nodes.length];
     }
 
@@ -48,20 +45,29 @@ public class DynamicHashSet<T> implements Collection<T> {
         if (object == null) {
             throw new IllegalArgumentException("Does not support null types!");
         }
-        if (contains(object)) {
+        Node<T> node = getNode(object);
+        if (node != null && node.chain.contains(object)) {
             return;
         }
-        if (resize) {
-            this.nodes = resize(1);
-            checkAndRehash();
+        if (node == null) {
+            // Don't resize if there is space
+            final Node<T> newNode = new Node<>();
+            this.nodes[hash(object) % this.nodes.length] = newNode;
+            newNode.chain.add(object);
+            this.size++;
+            return;
         }
-        Node<T> node = getNode(object);
+
+        if (resize) {
+            checkAndRehash(1);
+        }
+        node = getNode(object);
         if (node == null) {
             node = new Node<>();
-            this.nodes[hash(object.hashCode()) % this.nodes.length] = node;
+            this.nodes[hash(object) % this.nodes.length] = node;
         }
         node.chain.add(object);
-        size++;
+        this.size++;
     }
 
     public void addAll(final Collection<T> objects) {
@@ -141,18 +147,27 @@ public class DynamicHashSet<T> implements Collection<T> {
         }
         size--;
         if (node.chain.size() == 0) {
-            this.nodes[hash(object.hashCode()) % this.nodes.length] = null;
-        }
-        if (rehash) {
-            checkAndRehash();
+            this.nodes[hash(object) % this.nodes.length] = null;
+            // Only check for rehashing if the bucket has been removed
+            if (rehash) {
+                checkAndRehash(-1);
+            }
         }
         return true;
     }
 
     private void checkAndRehash() {
-        final int resize = calculateResizeAmount();
-        if (Math.abs(resize) >= (1 - loadCapacity) * this.size) {
-            final Node<T>[] nodes = resize(resize);
+        final int amt = calculateResizeAmount();
+        if (amt != 0) {
+            final Node<T>[] nodes = resize(amt);
+            rehash(nodes);
+        }
+    }
+
+    private void checkAndRehash(int extra) {
+        final int amt = calculateResizeAmount() + extra;
+        if (amt != 0) {
+            final Node<T>[] nodes = resize(amt);
             rehash(nodes);
         }
     }
@@ -169,15 +184,15 @@ public class DynamicHashSet<T> implements Collection<T> {
                 nulls++;
             }
         }
-        final int cap = len - nulls;
-        final int toResize = (int) ((len * loadCapacity) - cap);
-        return toResize < 0 ? -1 : 1;
+        final int filledBuckets = len - nulls;
+        final int maxFilled = (int) Math.ceil(loadCapacity * len);
+        return filledBuckets - maxFilled;
     }
 
     private Node<T>[] resize(int amount) {
         final Node<T>[] prev = this.nodes;
-        amount += calculateResizeAmount();
-        this.nodes = new Node[this.nodes.length + amount];
+        int amt = this.nodes.length + amount + calculateResizeAmount();
+        this.nodes = new Node[amt <= 0 ? 10 : amt];
         return prev;
     }
 
@@ -185,16 +200,15 @@ public class DynamicHashSet<T> implements Collection<T> {
         if (toExclude == null && elements.length > this.nodes.length) {
             throw new IllegalArgumentException("Cannot rehash larger array!");
         }
-        if (toExclude != null) {
+        if (toExclude != null && toExclude.length > 0) {
             int i = 0;
             for (final Node<T> node : elements) {
-                if (Arrays.binarySearch(toExclude, i++) != -1) {
+                i++;
+                final int hash;
+                if (node == null || (hash = hash(node)) == 0 || Arrays.binarySearch(toExclude, i) != -1) {
                     continue;
                 }
-                if (node == null) {
-                    continue;
-                }
-                int index = node.hashCode() % this.nodes.length;
+                int index = hash % this.nodes.length;
                 index = index < 0 ? -index : index;
                 this.nodes[index] = node;
             }
@@ -203,7 +217,11 @@ public class DynamicHashSet<T> implements Collection<T> {
                 if (node == null) {
                     continue;
                 }
-                int index = node.hashCode() % this.nodes.length;
+                int hash = hash(node);
+                if (hash == 0) {
+                    continue;
+                }
+                int index = hash % this.nodes.length;
                 index = index < 0 ? -index : index;
                 this.nodes[index] = node;
             }
@@ -216,7 +234,11 @@ public class DynamicHashSet<T> implements Collection<T> {
         private final LinkedList<E> chain = new LinkedList<>();
 
         @Override public int hashCode() {
-            return chain.size() == 0 ? chain.iterator().next().hashCode() : 0;
+            if (chain.size() == 0) {
+                return 0;
+            }
+            final E e = chain.get(0);
+            return e.hashCode();
         }
 
         @Override public boolean equals(final Object o) {
