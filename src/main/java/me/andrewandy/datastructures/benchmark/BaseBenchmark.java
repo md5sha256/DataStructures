@@ -18,14 +18,14 @@ import java.util.concurrent.TimeUnit;
 public class BaseBenchmark {
 
     @Benchmark
-    public void testAdd(final AddRemoveState state) {
+    public void testAdd(final ContainsState state) {
         for (Integer i : state.dynamicSample) {
             state.collection.add(i);
         }
     }
 
     @Benchmark
-    public void removeAllOccurrences(final AddRemoveState state) {
+    public void removeAllOccurrences(final ContainsState state) {
         for (Integer i : state.dynamicSample) {
             state.collection.remove(i);
         }
@@ -36,18 +36,6 @@ public class BaseBenchmark {
         for (final Integer i : state.dynamicSample) {
             state.collection.contains(i);
         }
-    }
-
-
-    @State(Scope.Benchmark)
-    public static class AddRemoveState extends ContainsState {
-
-        @Setup(Level.Iteration)
-        public void reset() {
-            collection.clear();
-            collection.addAll(staticSample);
-        }
-
     }
 
 
@@ -73,6 +61,15 @@ public class BaseBenchmark {
             this.dynamicSample = new Integer[values.collectionSize()];
             for (int index = 0; index < this.dynamicSample.length; index++) {
                 dynamicSample[index] = random.nextInt(1, Integer.MAX_VALUE);
+            }
+            reset(values);
+        }
+
+        @Setup(Level.Iteration)
+        public void reset(Main.GlobalValues values) {
+            collection.clear();
+            for (int index = 0; index < Math.min(values.collectionSize, values.sampleSize); index++) {
+                this.collection.add(staticSample[index]);
             }
         }
     }

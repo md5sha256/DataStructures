@@ -95,22 +95,12 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     @Override public boolean contains(final E element) {
-        /*
-        Iterator<E> iterator = new NodeIterator();
-        while (iterator.hasNext()) {
-            if (Objects.equals(iterator.next(), element)) {
-                return true;
-            }
-        }
-        return false;
-
-         */
         if (this.size == 0) {
             return false;
         } else if (this.size == 1) {
-            return Objects.equals(this.start.val, element);
+            return Objects.equals(this.start.next.get(), element);
         }
-        return indexOf(element) != -1;
+        return indexOf(element) >= 0;
     }
 
     public E get(final int index) {
@@ -162,18 +152,17 @@ public class LinkedList<E> implements Collection<E> {
         if (this.size == 0) {
             return -1;
         }
-        final Iterator<E> iterator = new NodeIterator();
         int index = 0;
         if (element == null) {
-            while (iterator.hasNext()) {
-                if (iterator.next() == null) {
+            for (E e : this) {
+                if (e == null) {
                     return index;
                 }
                 index++;
             }
         } else {
-            while (iterator.hasNext()) {
-                if (element.equals(iterator.next())) {
+            for (E e : this) {
+                if (element.equals(e)) {
                     return index;
                 }
                 index++;
@@ -190,12 +179,11 @@ public class LinkedList<E> implements Collection<E> {
         } else if (index + 1 > size) {
             throw new IndexOutOfBoundsException();
         }
-        int i = 0;
-        final NodeIterator nodeIterator = new NodeIterator();
-        while (i++ < index) {
-            nodeIterator.next();
+        Node<E> node = start;
+        for (int i = 0; i < index; i++) {
+            node = node.next;
         }
-        return nodeIterator.getCurrent();
+        return node;
     }
 
     @Override public Iterator<E> iterator() {

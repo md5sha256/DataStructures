@@ -107,10 +107,7 @@ public class FixedSizeHashSet<T> implements Collection<T> {
     }
 
     public boolean contains(final T object) {
-        if (object == null || this.size == 0) {
-            return false;
-        }
-        return getNode(object).chain.contains(object);
+        return object != null && this.size != 0 && getNode(object).chain.contains(object);
     }
 
     @Override public Iterator<T> iterator() {
@@ -123,7 +120,7 @@ public class FixedSizeHashSet<T> implements Collection<T> {
         private final LinkedList<E> chain = new LinkedList<>();
 
         @Override public int hashCode() {
-            return chain.size() == 0 ? chain.iterator().next().hashCode() : 0;
+            return chain.size() == 0 ? 0 : chain.get(0).hashCode();
         }
 
         @Override public boolean equals(final Object o) {
