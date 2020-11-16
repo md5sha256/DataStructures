@@ -44,13 +44,10 @@ public class BaseBenchmark {
         public Integer[] staticSample;
         public Integer[] dynamicSample;
         public Collection<Integer> collection;
-
-        public ContainsState() {
-
-        }
-
+        private Main.GlobalValues values;
         @Setup(Level.Trial)
         public void init(final Main.GlobalValues values) {
+            this.values = values;
             this.collection = values.newCollection();
 
             this.staticSample = new Integer[values.sampleSize];
@@ -58,15 +55,14 @@ public class BaseBenchmark {
             for (int index = 0; index < this.staticSample.length; index++) {
                 staticSample[index] = random.nextInt(Integer.MIN_VALUE, 0);
             }
-            this.dynamicSample = new Integer[values.collectionSize()];
+            this.dynamicSample = new Integer[values.collectionSize];
             for (int index = 0; index < this.dynamicSample.length; index++) {
                 dynamicSample[index] = random.nextInt(1, Integer.MAX_VALUE);
             }
-            reset(values);
         }
 
         @Setup(Level.Iteration)
-        public void reset(Main.GlobalValues values) {
+        public void reset() {
             collection.clear();
             for (int index = 0; index < Math.min(values.collectionSize, values.sampleSize); index++) {
                 this.collection.add(staticSample[index]);

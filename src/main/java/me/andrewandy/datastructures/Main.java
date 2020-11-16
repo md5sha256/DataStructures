@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
                                        .warmupIterations(2)
                                        .measurementIterations(5)
                                        .jvmArgs("-Xint")
-                                       //.include(BaseBenchmark.class.getSimpleName())
+                                       .include(BaseBenchmark.class.getSimpleName())
                                        .include(ArrayBenchmark.class.getSimpleName())
                                        .build();
         try {
@@ -38,24 +38,18 @@ import java.util.concurrent.TimeUnit;
 
     }
 
-    @State(Scope.Benchmark) public static class SizeValues {
-
-        @Param({"10", "100", "1000", "10000", "100000"}) public int collectionSize;
-        @Param ("1000") public int sampleSize;
-
-        public int collectionSize() {
-            return collectionSize;
-        }
-
-        public int sampleSize() {
-            return sampleSize;
-        }
+    @State(Scope.Benchmark) public static class ArrayValues {
+        @Param({"100000"}) public int collectionSize;
+        public final int sampleSize = 1000;
 
     }
 
-    @State(Scope.Benchmark) public static class GlobalValues extends SizeValues {
+    @State(Scope.Benchmark) public static class GlobalValues {
 
-        @Param({"LinkedList"})
+        @Param({"100000"}) public int collectionSize;
+        public final int sampleSize = 1000;
+
+        @Param({"LinkedList", "DynamicHashSet", "FixedSizeHashSet"})
         public String collection;
 
         public <T> Collection<T> newCollection() {

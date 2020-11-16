@@ -3,7 +3,6 @@ package me.andrewandy.datastructures;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 public class LinkedList<E> implements Collection<E> {
 
@@ -95,11 +94,6 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     @Override public boolean contains(final E element) {
-        if (this.size == 0) {
-            return false;
-        } else if (this.size == 1) {
-            return Objects.equals(this.start.next.get(), element);
-        }
         return indexOf(element) >= 0;
     }
 

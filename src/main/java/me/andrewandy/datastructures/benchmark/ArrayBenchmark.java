@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class ArrayBenchmark {
 
-    @Benchmark
+    //@Benchmark
     public void testAdd(final ContainsState state) {
         for (Integer i : state.dynamicSample) {
             Integer[] copy = new Integer[state.collection.length + 1];
@@ -30,7 +30,7 @@ public class ArrayBenchmark {
         }
     }
 
-    @Benchmark
+    //@Benchmark
     public void removeAllOccurrences(final ContainsState state) {
         for (Integer i : state.dynamicSample) {
             int[] toRemove = new int[0];
@@ -89,13 +89,11 @@ public class ArrayBenchmark {
         public Integer[] staticSample;
         public Integer[] dynamicSample;
         public Integer[] collection;
-
-        public ContainsState() {
-
-        }
+        private Main.ArrayValues values;
 
         @Setup(Level.Trial)
-        public void init(final Main.GlobalValues values) {
+        public void init(final Main.ArrayValues values) {
+            this.values = values;
             this.collection = new Integer[values.collectionSize];
 
             this.staticSample = new Integer[values.sampleSize];
@@ -103,15 +101,14 @@ public class ArrayBenchmark {
             for (int index = 0; index < this.staticSample.length; index++) {
                 staticSample[index] = random.nextInt(Integer.MIN_VALUE, 0);
             }
-            this.dynamicSample = new Integer[values.collectionSize()];
+            this.dynamicSample = new Integer[values.collectionSize];
             for (int index = 0; index < this.dynamicSample.length; index++) {
                 dynamicSample[index] = random.nextInt(1, Integer.MAX_VALUE);
             }
-            reset(values);
         }
 
         @Setup(Level.Iteration)
-        public void reset(Main.GlobalValues values) {
+        public void reset() {
             collection = new Integer[values.collectionSize];
             System.arraycopy(staticSample, 0, this.collection, 0,
                              Math.min(values.collectionSize, values.sampleSize));
