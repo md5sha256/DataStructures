@@ -237,8 +237,7 @@ public class DynamicHashSet<T> implements Collection<T> {
             if (chain.size() == 0) {
                 return 0;
             }
-            final E e = chain.get(0);
-            return e.hashCode();
+            return chain.get(0).hashCode();
         }
 
         @Override public boolean equals(final Object o) {

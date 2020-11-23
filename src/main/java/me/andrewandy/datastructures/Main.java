@@ -8,6 +8,7 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
                                        .jvmArgs("-Xint")
                                        .include(BaseBenchmark.class.getSimpleName())
                                        .include(ArrayBenchmark.class.getSimpleName())
+                                       .resultFormat(ResultFormatType.CSV)
                                        .build();
         try {
             new Runner(options).run();
@@ -39,14 +41,18 @@ import java.util.concurrent.TimeUnit;
     }
 
     @State(Scope.Benchmark) public static class ArrayValues {
-        @Param({"100000"}) public int collectionSize;
+        @Param({"10", "100", "1000","10000"})
+        //@Param({"100000"})
+        public int collectionSize;
         public final int sampleSize = 1000;
 
     }
 
     @State(Scope.Benchmark) public static class GlobalValues {
 
-        @Param({"100000"}) public int collectionSize;
+        //@Param({"10", "100", "1000","10000"})
+        @Param({"100000"})
+        public int collectionSize;
         public final int sampleSize = 1000;
 
         @Param({"LinkedList", "DynamicHashSet", "FixedSizeHashSet"})

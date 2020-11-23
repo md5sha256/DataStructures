@@ -3,39 +3,72 @@ package me.andrewandy.datastructures;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class LinkedList<E> implements Collection<E> {
 
     private Node<E> start = new Node<>();
     private Node<E> last = start;
-    private int size;
+    private int size = 0;
 
     private static <E> void insertNode(final Node<E> prev, final Node<E> toInsert) {
         final Node<E> next = prev.next;
         prev.next = toInsert;
         toInsert.next = next;
+        toInsert.previous = prev;
     }
 
-    @Override public void addAll(final Collection<E> collection) {
+    private void removeNode(final Node<E> node) {
+        if (this.size == 0) {
+            return;
+        }
+        final Node<E> prev = node.previous;
+        final Node<E> next = node.next;
+        if (node == start) {
+            if (next == null) {
+                start = new Node<>();
+                last = start;
+            } else {
+                start = next;
+            }
+            this.size--;
+        } else {
+            if (prev != null) {
+                prev.next = next;
+            }
+            if (next != null) {
+                next.previous = prev;
+            }
+            if (prev != null || next != null) {
+                this.size--;
+            }
+        }
+    }
+
+    @Override
+    public void addAll(final Collection<E> collection) {
         for (final E e : collection) {
             add(e);
         }
     }
 
-    @Override public void addAll(final E[] iterable) {
+    @Override
+    public void addAll(final E[] iterable) {
         for (final E e : iterable) {
             add(e);
         }
     }
 
     public void add(final E element) {
-        if (last == start) {
-            last = new Node<>(element);
+        if (size == 0) {
+            start.val = element;
+            last = new Node<>();
             start.next = last;
-        } else {
-            last.next = new Node<>(element);
-            this.last = last.next;
+            last.previous = start;
+            size = 1;
+            return;
         }
+        insertNode(last, new Node<>(element));
         size++;
     }
 
@@ -43,31 +76,24 @@ public class LinkedList<E> implements Collection<E> {
         if (this.size == 0) {
             return false;
         }
-        Node<E> node = start;
-        Node<E> prev = node;
-        boolean mod = false;
+        int oldSize = this.size;
+        Node<E> current = start;
         if (e == null) {
-            while (node != null) {
-                if (node.val == null) {
-                    prev.next = node.next;
-                    mod = true;
-                    this.size--;
+            while (current != null) {
+                if (current.val == null) {
+                    removeNode(current);
                 }
-                prev = node;
-                node = node.next;
+                current = current.next;
             }
         } else {
-            while (node != null) {
-                if (e.equals(node.val)) {
-                    prev.next = node.next;
-                    mod = true;
-                    this.size--;
+            while (current != null) {
+                if (Objects.equals(current.val, e)) {
+                    removeNode(current);
                 }
-                prev = node;
-                node = node.next;
+                current = current.next;
             }
         }
-        return mod;
+        return this.size != oldSize;
     }
 
     @Override public void removeAll(final Collection<E> collection) {
@@ -94,25 +120,23 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     @Override public boolean contains(final E element) {
-        return indexOf(element) >= 0;
+        return indexOf(element) != -1;
     }
 
     public E get(final int index) {
         if (index < 0 || index > size - 1) {
             throw new IndexOutOfBoundsException();
         }
-        if (index == this.size - 1) {
-            return last.get();
-        } else if (index == 0) {
-            return start.next.get();
+        if (index == 0) {
+            return start.val;
+        } else if (index == this.size - 1) {
+            return last.val;
         }
-        int i = 0;
         Node<E> current = start;
-        while (i < index) {
+        for (int i = 0; i < index; i++) {
             current = current.next;
-            i++;
         }
-        return current.get();
+        return current.val;
     }
 
     public void add(final int index, final E element) {
@@ -126,40 +150,38 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     public void remove(final int index) {
-        if (index == 0) {
-           if (this.start.next == null) {
-               this.last = this.start;
-               this.start.val = null;
-               this.size = 0;
-           } else {
-               this.start = this.start.next;
-           }
-        } else {
-            final Node<E> prev = getNode(index - 1);
-            final Node<E> toRemove = getNode(index);
-            prev.next = toRemove == null ? null : toRemove.next;
+        if (index < 0 || index > size - 1) {
+            throw new IndexOutOfBoundsException();
         }
-        size--;
+        if (index == size - 1) {
+            removeNode(last);
+            return;
+        }
+        Node<E> node = start;
+        for (int i = 0; i < index - 1 && node != null; i++) {
+            node = node.next;
+        }
+        removeNode(node);
     }
 
     public int indexOf(final E element) {
         if (this.size == 0) {
             return -1;
         }
-        int index = 0;
+        Node<E> current = start;
         if (element == null) {
-            for (E e : this) {
-                if (e == null) {
-                    return index;
+            for (int i = 0; current != null; i++) {
+                if (current.val == null) {
+                    return i;
                 }
-                index++;
+                current = current.next;
             }
         } else {
-            for (E e : this) {
-                if (element.equals(e)) {
-                    return index;
+            for (int i = 0; current != null; i++) {
+                if (Objects.equals(current.val, element)) {
+                    return i;
                 }
-                index++;
+                current = current.next;
             }
         }
         return -1;
@@ -188,6 +210,7 @@ public class LinkedList<E> implements Collection<E> {
     private static class Node<E> {
 
         Node<E> next;
+        Node<E> previous;
         private E val;
 
         public Node(final E e) {
@@ -196,10 +219,6 @@ public class LinkedList<E> implements Collection<E> {
 
         public Node() {
 
-        }
-
-        public E get() {
-            return val;
         }
 
         public void set(final E value) {
@@ -215,11 +234,9 @@ public class LinkedList<E> implements Collection<E> {
     private class NodeIterator implements Iterator<E> {
 
         private Node<E> current;
-        private Node<E> prev;
 
         public NodeIterator() {
             this.current = start;
-            this.prev = start;
         }
 
         Node<E> getCurrent() {
@@ -234,16 +251,18 @@ public class LinkedList<E> implements Collection<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            prev = current;
+            final E val = current.val;
             current = current.next;
-            return current.get();
+            return val;
         }
 
         @Override public void remove() {
             if (current == null) {
                 throw new NoSuchElementException();
             }
-            prev.next = current.next;
+            final Node<E> next = current.next;
+            removeNode(current);
+            current = next;
         }
     }
 

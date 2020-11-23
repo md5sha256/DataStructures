@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class ArrayBenchmark {
 
-    //@Benchmark
+    @Benchmark
     public void testAdd(final ContainsState state) {
         for (Integer i : state.dynamicSample) {
             Integer[] copy = new Integer[state.collection.length + 1];
@@ -30,7 +30,7 @@ public class ArrayBenchmark {
         }
     }
 
-    //@Benchmark
+    @Benchmark
     public void removeAllOccurrences(final ContainsState state) {
         for (Integer i : state.dynamicSample) {
             int[] toRemove = new int[0];
@@ -66,16 +66,18 @@ public class ArrayBenchmark {
 
     @Benchmark
     public void testContains(final ContainsState state) {
-        for (final Integer i : state.dynamicSample) {
-            if (i == null) {
-                for (Integer integer : state.collection) {
-                    if (integer == null) {
+        for (int j = 0; j < state.dynamicSample.length; j++) {
+            final Integer val = state.dynamicSample[j];
+            if (val == null) {
+                for (int k = 0; k < state.collection.length; k++) {
+                    if (state.collection[k] == null) {
                         break;
                     }
                 }
             } else {
-                for (Integer integer : state.collection) {
-                    if (integer != null && i.intValue() == integer.intValue()) {
+                for (int k = 0; k < state.collection.length; k++) {
+                    Integer val2 = state.collection[k];
+                    if (val2 != null && val.intValue() == val2.intValue()) {
                         break;
                     }
                 }
