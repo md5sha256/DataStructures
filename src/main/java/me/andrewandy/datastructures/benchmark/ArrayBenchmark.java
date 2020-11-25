@@ -21,65 +21,43 @@ public class ArrayBenchmark {
     public void testAdd(final ContainsState state) {
         for (Integer i : state.dynamicSample) {
             Integer[] copy = new Integer[state.collection.length + 1];
-            int index = 0;
-            for (Integer integer : state.collection) {
-                copy[index++] = integer;
+            for (int index = 0; index < state.collection.length; index++) {
+                copy[index] = state.collection[index];
             }
-            copy[index] = i;
+            copy[state.collection.length - 1] = i;
             state.collection = copy;
         }
     }
 
     @Benchmark
     public void removeAllOccurrences(final ContainsState state) {
-        for (Integer i : state.dynamicSample) {
-            int[] toRemove = new int[0];
-            int index = 0;
-            for (Integer value : state.collection) {
-                if (Objects.equals(value, i)) {
-                    int[] temp = new int[toRemove.length + 1];
-                    int j = 0;
-                    for (int k : toRemove) {
-                        temp[j++] = k;
-                    }
-                    temp[j] = index;
-                    toRemove = temp;
+
+        for (int i = 0; i < state.dynamicSample.length; i++) {
+            Integer[] newValues = new Integer[state.collection.length];
+            int skipped = 0;
+            for (int j = 0; j < state.collection.length; j++) {
+                if (!Objects.equals(state.collection[j], state.dynamicSample[i])) {
+                    newValues[j] = state.collection[j];
+                    skipped++;
                 }
             }
-            Integer[] newValues = new Integer[state.collection.length - toRemove.length];
-            for (int counter = 0; counter < state.collection.length; counter++) {
-                boolean skip = false;
-                for (int num : toRemove) {
-                    if (counter == num) {
-                        skip = true;
-                        break;
-                    }
-                }
-                if (skip) {
-                    continue;
-                }
-                newValues[counter] = state.collection[counter];
+            if (skipped == 0) {
+                continue;
             }
-            state.collection = newValues;
+            Integer[] finalValues = new Integer[newValues.length - skipped];
+            for (int index = 0; index < finalValues.length; index++) {
+                finalValues[index] = newValues[index];
+            }
+            state.collection = finalValues;
         }
     }
 
     @Benchmark
     public void testContains(final ContainsState state) {
-        for (int j = 0; j < state.dynamicSample.length; j++) {
-            final Integer val = state.dynamicSample[j];
-            if (val == null) {
-                for (int k = 0; k < state.collection.length; k++) {
-                    if (state.collection[k] == null) {
-                        break;
-                    }
-                }
-            } else {
-                for (int k = 0; k < state.collection.length; k++) {
-                    Integer val2 = state.collection[k];
-                    if (val2 != null && val.intValue() == val2.intValue()) {
-                        break;
-                    }
+        for (Integer val : state.dynamicSample) {
+            for (int index = 0; index < state.collection.length; index++) {
+                if (Objects.equals(state.collection[index], val)) {
+                    break;
                 }
             }
         }

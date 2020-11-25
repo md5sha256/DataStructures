@@ -50,8 +50,8 @@ import java.util.concurrent.TimeUnit;
 
     @State(Scope.Benchmark) public static class GlobalValues {
 
-        //@Param({"10", "100", "1000","10000"})
-        @Param({"100000"})
+        @Param({"10", "100", "1000","10000"})
+        //@Param({"100000"})
         public int collectionSize;
         public final int sampleSize = 1000;
 

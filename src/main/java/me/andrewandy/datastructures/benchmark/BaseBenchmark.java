@@ -64,7 +64,8 @@ public class BaseBenchmark {
         @Setup(Level.Iteration)
         public void reset() {
             collection.clear();
-            for (int index = 0; index < Math.min(values.collectionSize, values.sampleSize); index++) {
+            int size = Math.min(values.collectionSize, values.sampleSize);
+            for (int index = 0; index < size; index++) {
                 this.collection.add(staticSample[index]);
             }
         }

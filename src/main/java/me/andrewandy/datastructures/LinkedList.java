@@ -78,20 +78,11 @@ public class LinkedList<E> implements Collection<E> {
         }
         int oldSize = this.size;
         Node<E> current = start;
-        if (e == null) {
-            while (current != null) {
-                if (current.val == null) {
-                    removeNode(current);
-                }
-                current = current.next;
+        while (current != null) {
+            if (Objects.equals(current.val, e)) {
+                removeNode(current);
             }
-        } else {
-            while (current != null) {
-                if (Objects.equals(current.val, e)) {
-                    removeNode(current);
-                }
-                current = current.next;
-            }
+            current = current.next;
         }
         return this.size != oldSize;
     }
@@ -156,9 +147,12 @@ public class LinkedList<E> implements Collection<E> {
         if (index == size - 1) {
             removeNode(last);
             return;
+        } else if (index == 0) {
+            removeNode(start);
+            return;
         }
         Node<E> node = start;
-        for (int i = 0; i < index - 1 && node != null; i++) {
+        for (int i = 0; i < index; i++) {
             node = node.next;
         }
         removeNode(node);
@@ -169,20 +163,11 @@ public class LinkedList<E> implements Collection<E> {
             return -1;
         }
         Node<E> current = start;
-        if (element == null) {
-            for (int i = 0; current != null; i++) {
-                if (current.val == null) {
-                    return i;
-                }
-                current = current.next;
+        for (int i = 0; current != null; i++) {
+            if (Objects.equals(current.val, element)) {
+                return i;
             }
-        } else {
-            for (int i = 0; current != null; i++) {
-                if (Objects.equals(current.val, element)) {
-                    return i;
-                }
-                current = current.next;
-            }
+            current = current.next;
         }
         return -1;
     }
