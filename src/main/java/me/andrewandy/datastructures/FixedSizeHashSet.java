@@ -68,7 +68,12 @@ public class FixedSizeHashSet<T> implements Collection<T> {
             return false;
         }
         final Node<T> node = getNode(object);
-        return node.chain.remove(object);
+        return node.chain.removeFirst(object);
+    }
+
+    @Override
+    public boolean removeFirst(final T t) {
+        return remove(t);
     }
 
     @Override public void removeAll(final Collection<T> objects) {

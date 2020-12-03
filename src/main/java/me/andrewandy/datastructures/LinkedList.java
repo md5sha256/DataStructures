@@ -72,6 +72,23 @@ public class LinkedList<E> implements Collection<E> {
         size++;
     }
 
+    @Override
+    public boolean removeFirst(final E e) {
+        if (this.size == 0) {
+            return false;
+        }
+        int oldSize = this.size;
+        Node<E> current = start;
+        while (current != null) {
+            if (Objects.equals(current.val, e)) {
+                removeNode(current);
+                break;
+            }
+            current = current.next;
+        }
+        return this.size != oldSize;
+    }
+
     @Override public boolean remove(final E e) {
         if (this.size == 0) {
             return false;

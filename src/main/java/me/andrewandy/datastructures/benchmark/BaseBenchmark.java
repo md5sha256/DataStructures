@@ -25,9 +25,9 @@ public class BaseBenchmark {
     }
 
     @Benchmark
-    public void removeAllOccurrences(final ContainsState state) {
-        for (Integer i : state.dynamicSample) {
-            state.collection.remove(i);
+    public void removeFirst(final ContainsState state) {
+        for (Integer i : state.removeDynamicSample) {
+            state.collection.removeFirst(i);
         }
     }
 
@@ -43,6 +43,7 @@ public class BaseBenchmark {
     public static class ContainsState {
         public Integer[] staticSample;
         public Integer[] dynamicSample;
+        public Integer[] removeDynamicSample;
         public Collection<Integer> collection;
         private Main.GlobalValues values;
         @Setup(Level.Trial)
@@ -50,22 +51,24 @@ public class BaseBenchmark {
             this.values = values;
             this.collection = values.newCollection();
 
-            this.staticSample = new Integer[values.sampleSize];
+            this.staticSample = new Integer[values.collectionSize];
             final ThreadLocalRandom random = ThreadLocalRandom.current();
             for (int index = 0; index < this.staticSample.length; index++) {
                 staticSample[index] = random.nextInt(Integer.MIN_VALUE, 0);
             }
-            this.dynamicSample = new Integer[values.collectionSize];
+            this.dynamicSample = new Integer[values.sampleSize];
+            this.removeDynamicSample = new Integer[values.sampleSize];
             for (int index = 0; index < this.dynamicSample.length; index++) {
                 dynamicSample[index] = random.nextInt(1, Integer.MAX_VALUE);
+                removeDynamicSample[index] = dynamicSample[index];
             }
+            removeDynamicSample[dynamicSample.length - 1] = staticSample.length - 1;
         }
 
         @Setup(Level.Iteration)
         public void reset() {
             collection.clear();
-            int size = Math.min(values.collectionSize, values.sampleSize);
-            for (int index = 0; index < size; index++) {
+            for (int index = 0; index < values.collectionSize; index++) {
                 this.collection.add(staticSample[index]);
             }
         }

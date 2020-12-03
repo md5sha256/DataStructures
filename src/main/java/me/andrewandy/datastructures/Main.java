@@ -1,7 +1,7 @@
 package me.andrewandy.datastructures;
 
-import me.andrewandy.datastructures.benchmark.BaseBenchmark;
 import me.andrewandy.datastructures.benchmark.ArrayBenchmark;
+import me.andrewandy.datastructures.benchmark.BaseBenchmark;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;

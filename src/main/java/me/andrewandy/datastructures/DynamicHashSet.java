@@ -103,6 +103,11 @@ public class DynamicHashSet<T> implements Collection<T> {
         return remove(object, true);
     }
 
+    @Override
+    public boolean removeFirst(final T t) {
+        return remove(t, true);
+    }
+
     @Override public void removeAll(final Collection<T> objects) {
         if (objects.size() == 0 || this.size == 0) {
             return;
@@ -142,7 +147,7 @@ public class DynamicHashSet<T> implements Collection<T> {
 
     private boolean remove(final T object, final boolean rehash) {
         final Node<T> node = getNode(object);
-        if (node == null || !node.chain.remove(object)) {
+        if (node == null || !node.chain.removeFirst(object)) {
             return false;
         }
         size--;
