@@ -55,7 +55,7 @@ import java.util.concurrent.TimeUnit;
         public int collectionSize;
         public final int sampleSize = 1000;
 
-        @Param({"LinkedList", "DynamicHashSet", "FixedSizeHashSet"})
+        @Param({"LinkedList", "FixedSizeHashSet"})
         public String collection;
 
         public <T> Collection<T> newCollection() {

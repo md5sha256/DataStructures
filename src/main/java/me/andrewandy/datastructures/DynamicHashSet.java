@@ -4,7 +4,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.LinkedList;
 
+/*
+ * Broken implementation
+ */
+@Deprecated
 public class DynamicHashSet<T> implements Collection<T> {
 
     private final float loadCapacity;
@@ -147,7 +152,7 @@ public class DynamicHashSet<T> implements Collection<T> {
 
     private boolean remove(final T object, final boolean rehash) {
         final Node<T> node = getNode(object);
-        if (node == null || !node.chain.removeFirst(object)) {
+        if (node == null || !node.chain.removeFirstOccurrence(object)) {
             return false;
         }
         size--;
@@ -201,44 +206,35 @@ public class DynamicHashSet<T> implements Collection<T> {
         return prev;
     }
 
-    private void rehash(final Node<T>[] elements, final int... toExclude) {
-        if (toExclude == null && elements.length > this.nodes.length) {
-            throw new IllegalArgumentException("Cannot rehash larger array!");
-        }
-        if (toExclude != null && toExclude.length > 0) {
-            int i = 0;
-            for (final Node<T> node : elements) {
-                i++;
-                final int hash;
-                if (node == null || (hash = hash(node)) == 0 || Arrays.binarySearch(toExclude, i) != -1) {
-                    continue;
-                }
-                int index = hash % this.nodes.length;
-                index = index < 0 ? -index : index;
-                this.nodes[index] = node;
+    private void rehash(final Node<T>[] elements) {
+        for (final Node<T> node : elements) {
+            if (node == null) {
+                continue;
             }
-        } else {
-            for (final Node<T> node : elements) {
-                if (node == null) {
-                    continue;
+            //System.out.println(node.chain.toString());
+            for (T element : node.chain) {
+                int index = hash(element) % this.nodes.length;
+                Node<T> newNode;
+                if ((newNode = this.nodes[index]) == null) {
+                    newNode = new Node<>();
                 }
-                int hash = hash(node);
-                if (hash == 0) {
-                    continue;
-                }
-                int index = hash % this.nodes.length;
-                index = index < 0 ? -index : index;
-                this.nodes[index] = node;
+                newNode.chain.add(element);
             }
         }
     }
 
+    @Override
+    public String toString() {
+        return "DynamicHashSet{" + "loadCapacity=" + loadCapacity + ", nodes=" + Arrays.toString(nodes) + ", size="
+            + size + '}';
+    }
 
     private static class Node<E> {
 
         private final LinkedList<E> chain = new LinkedList<>();
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             if (chain.size() == 0) {
                 return 0;
             }
@@ -252,6 +248,11 @@ public class DynamicHashSet<T> implements Collection<T> {
                 return false;
             final Node<?> node = (Node<?>) o;
             return Objects.equals(chain, node.chain);
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" + "chain=" + chain + '}';
         }
     }
 

@@ -1,5 +1,6 @@
 package me.andrewandy.datastructures;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -119,6 +120,11 @@ public class FixedSizeHashSet<T> implements Collection<T> {
         return new NodeIterator();
     }
 
+    @Override
+    public String toString() {
+        return "FixedSizeHashSet{" + "nodes=" + Arrays.toString(nodes) + ", arrayLen=" + arrayLen + ", size="
+            + size + '}';
+    }
 
     private static class Node<E> {
 
@@ -135,6 +141,11 @@ public class FixedSizeHashSet<T> implements Collection<T> {
                 return false;
             final Node<?> node = (Node<?>) o;
             return Objects.equals(chain, node.chain);
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" + "chain=" + chain + '}';
         }
     }
 

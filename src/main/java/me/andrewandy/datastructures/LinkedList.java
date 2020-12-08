@@ -7,15 +7,53 @@ import java.util.Objects;
 
 public class LinkedList<E> implements Collection<E> {
 
-    private Node<E> start = new Node<>();
-    private Node<E> last = start;
+    private Node<E> head;
+    private Node<E> tail;
     private int size = 0;
 
-    private static <E> void insertNode(final Node<E> prev, final Node<E> toInsert) {
-        final Node<E> next = prev.next;
-        prev.next = toInsert;
-        toInsert.next = next;
-        toInsert.previous = prev;
+    public LinkedList() {
+    }
+
+    private void tailAdd(final E element) {
+        switch (size) {
+            case 0:
+                head = new Node<>(element);
+                tail = new Node<>();
+                head.next = tail;
+                tail.previous = head;
+                break;
+            case 1:
+                final Node<E> newNode = new Node<>(element);
+                head.next = newNode;
+                newNode.previous = head;
+                tail.previous = newNode;
+                break;
+            default:
+                final Node<E> node = new Node<>(element);
+                tail.previous.next = node;
+                node.previous = tail.previous;
+                tail.previous = node;
+                node.next = tail;
+                break;
+        }
+        size++;
+    }
+
+    private Node<E> insertElement(final Node<E> prev, E element) {
+        final Node<E> prevNext = prev.next;
+        final Node<E> newNode = new Node<>(element);
+        newNode.previous = prev;
+        prev.next = newNode;
+        newNode.next = prevNext;
+        if (prevNext == null) {
+            this.tail = new Node<>();
+            this.tail.previous = newNode;
+            newNode.next = this.tail;
+        } else {
+            prevNext.previous = newNode;
+        }
+        this.size++;
+        return newNode;
     }
 
     private void removeNode(final Node<E> node) {
@@ -24,12 +62,12 @@ public class LinkedList<E> implements Collection<E> {
         }
         final Node<E> prev = node.previous;
         final Node<E> next = node.next;
-        if (node == start) {
+        if (node == head) {
             if (next == null) {
-                start = new Node<>();
-                last = start;
+                head = new Node<>();
+                tail = head;
             } else {
-                start = next;
+                head = next;
             }
             this.size--;
         } else {
@@ -60,16 +98,23 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     public void add(final E element) {
-        if (size == 0) {
-            start.val = element;
-            last = new Node<>();
-            start.next = last;
-            last.previous = start;
-            size = 1;
-            return;
+        tailAdd(element);
+    }
+
+    @Override
+    public boolean remove(final E e) {
+        if (this.size == 0) {
+            return false;
         }
-        insertNode(last, new Node<>(element));
-        size++;
+        int oldSize = this.size;
+        Node<E> current = head;
+        while (current != null) {
+            if (Objects.equals(current.val, e)) {
+                removeNode(current);
+            }
+            current = current.next;
+        }
+        return this.size != oldSize;
     }
 
     @Override
@@ -78,26 +123,11 @@ public class LinkedList<E> implements Collection<E> {
             return false;
         }
         int oldSize = this.size;
-        Node<E> current = start;
+        Node<E> current = head;
         while (current != null) {
             if (Objects.equals(current.val, e)) {
                 removeNode(current);
                 break;
-            }
-            current = current.next;
-        }
-        return this.size != oldSize;
-    }
-
-    @Override public boolean remove(final E e) {
-        if (this.size == 0) {
-            return false;
-        }
-        int oldSize = this.size;
-        Node<E> current = start;
-        while (current != null) {
-            if (Objects.equals(current.val, e)) {
-                removeNode(current);
             }
             current = current.next;
         }
@@ -117,10 +147,15 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     @Override public void clear() {
-        this.start.next = null;
-        this.start.set(null);
-        this.last = start;
-        this.size = 0;
+        switch (this.size) {
+            case 0:
+                return;
+            default:
+                this.tail = null;
+            case 1:
+                this.head = null;
+        }
+        size = 0;
     }
 
     public int size() {
@@ -136,11 +171,11 @@ public class LinkedList<E> implements Collection<E> {
             throw new IndexOutOfBoundsException();
         }
         if (index == 0) {
-            return start.val;
+            return head.val;
         } else if (index == this.size - 1) {
-            return last.val;
+            return tail.val;
         }
-        Node<E> current = start;
+        Node<E> current = head;
         for (int i = 0; i < index; i++) {
             current = current.next;
         }
@@ -148,13 +183,8 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     public void add(final int index, final E element) {
-        if (index + 1 == size) {
-            add(element);
-            return;
-        }
         final Node<E> node = getNode(index);
-        insertNode(node, new Node<>(element));
-        size++;
+        insertElement(node, element);
     }
 
     public void remove(final int index) {
@@ -162,13 +192,13 @@ public class LinkedList<E> implements Collection<E> {
             throw new IndexOutOfBoundsException();
         }
         if (index == size - 1) {
-            removeNode(last);
+            removeNode(tail);
             return;
         } else if (index == 0) {
-            removeNode(start);
+            removeNode(head);
             return;
         }
-        Node<E> node = start;
+        Node<E> node = head;
         for (int i = 0; i < index; i++) {
             node = node.next;
         }
@@ -179,7 +209,7 @@ public class LinkedList<E> implements Collection<E> {
         if (this.size == 0) {
             return -1;
         }
-        Node<E> current = start;
+        Node<E> current = head;
         for (int i = 0; current != null; i++) {
             if (Objects.equals(current.val, element)) {
                 return i;
@@ -191,21 +221,33 @@ public class LinkedList<E> implements Collection<E> {
 
     private Node<E> getNode(final int index) {
         if (index == 0) {
-            return start;
+            return head;
         } else if (index + 1 == size) {
-            return last;
+            return tail;
         } else if (index + 1 > size) {
             throw new IndexOutOfBoundsException();
         }
-        Node<E> node = start;
+        Node<E> node = head;
         for (int i = 0; i < index; i++) {
             node = node.next;
         }
         return node;
     }
 
-    @Override public Iterator<E> iterator() {
+    @Override
+    public Iterator<E> iterator() {
         return new NodeIterator();
+    }
+
+    @Override
+    public String toString() {
+        final Object[] arr = new Object[this.size];
+        Node<E> node = head;
+        for (int index = 0; index < this.size && node != null; index++) {
+            arr[index] = node.val;
+            node = node.next;
+        }
+        return Arrays.toString(arr);
     }
 
 
@@ -216,19 +258,18 @@ public class LinkedList<E> implements Collection<E> {
         private E val;
 
         public Node(final E e) {
-            set(e);
+            this.val = e;
         }
 
         public Node() {
 
         }
 
-        public void set(final E value) {
-            this.val = value;
-        }
-
-        Node<E> getNext() {
-            return next;
+        @Override
+        public String toString() {
+            return "Node{" + "next=" + (next == null ? "null" : next.val) + ", previous=" + (previous == null ?
+                "null" :
+                previous.val) + ", val=" + val + '}';
         }
     }
 
@@ -238,11 +279,7 @@ public class LinkedList<E> implements Collection<E> {
         private Node<E> current;
 
         public NodeIterator() {
-            this.current = start;
-        }
-
-        Node<E> getCurrent() {
-            return this.current;
+            this.current = head;
         }
 
         @Override public boolean hasNext() {
@@ -266,14 +303,5 @@ public class LinkedList<E> implements Collection<E> {
             removeNode(current);
             current = next;
         }
-    }
-
-    @Override public String toString() {
-       final Object[] arr = new Object[this.size];
-       int i = 0;
-       for (E e : this) {
-           arr[i++] = e;
-       }
-       return Arrays.toString(arr);
     }
 }

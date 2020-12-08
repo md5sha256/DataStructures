@@ -1,27 +1,45 @@
 package me.andrewandy.datastructures;
 
+import me.andrewandy.datastructures.benchmark.BaseBenchmark;
+
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SanityCheck {
 
     public Integer[] dynamicSample;
-    public Integer[] collection;
+    public Collection<Integer> collection;
 
     public SanityCheck() {
 
     }
 
     public static void main(String[] args) {
-        final SanityCheck sanityCheck = new SanityCheck();
-        sanityCheck.init(10000, 1000);
-        sanityCheck.testSearch();
-        sanityCheck.testAdd();
-        sanityCheck.testRemove();
+        /*
+        final Main.GlobalValues values = new Main.GlobalValues();
+        values.collection = "FixedSizeHashSet";
+        values.collectionSize = 10;
+        final BaseBenchmark.ContainsState containsState = new BaseBenchmark.ContainsState();
+        final BaseBenchmark benchmark = new BaseBenchmark();
+        containsState.init(values);
+        containsState.reset();
+        long now = System.currentTimeMillis();
+        benchmark.testAdd(containsState);
+        System.out.println((System.currentTimeMillis()) - now);
+         */
+        final Collection<Integer> collection = new FixedSizeHashSet<>(100);
+        for (int i = -101; i < -1; i++) {
+            collection.add(-i);
+        }
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < 1000; i++) {
+            collection.add(i);
+        }
+        System.out.println((System.currentTimeMillis() - now));
     }
 
     public void init(int size, int sampleSize) {
-        this.collection = new Integer[size];
+        this.collection = new LinkedList<>();
         ThreadLocalRandom random = ThreadLocalRandom.current();
         this.dynamicSample = new Integer[sampleSize];
         for (int index = 0; index < this.dynamicSample.length; index++) {
@@ -44,12 +62,7 @@ public class SanityCheck {
     public void testAdd() {
         long start = System.currentTimeMillis();
         for (Integer i : dynamicSample) {
-            Integer[] copy = new Integer[collection.length + 1];
-            for (int index = 0; index < collection.length; index++) {
-                copy[index] = collection[index];
-            }
-            copy[collection.length] = i;
-            this.collection = copy;
+           collection.add(i);
         }
         System.out.println("took: " + (System.currentTimeMillis() - start) + "ms.");
     }
@@ -57,25 +70,7 @@ public class SanityCheck {
     public void testRemove() {
         long start = System.currentTimeMillis();
         for (Integer toTest : dynamicSample) {
-            int toRemove = -1;
-            for (int index = 0; index < collection.length; index++) {
-                if (Objects.equals(collection[index], toTest)) {
-                    toRemove = index;
-                    break;
-                }
-            }
-            if (toRemove == -1) {
-                break;
-            }
-            final Integer[] newArr = new Integer[collection.length - 1];
-            int newIndex = 0;
-            for (int index = 0; index < newArr.length; index++) {
-                if (index == toRemove) {
-                    continue;
-                }
-                newArr[newIndex++] = collection[index];
-            }
-            collection = newArr;
+            collection.removeFirst(toTest);
         }
         System.out.println("took: " + (System.currentTimeMillis() - start) + "ms.");
     }
