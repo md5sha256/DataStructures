@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+/**
+ * Implementation of a doubly-linked list.
+ *
+ * @param <E> A generic type, can be anything.
+ */
 public class LinkedList<E> implements Collection<E> {
 
     private Node<E> head;

@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+/**
+ * Implementation of a HashSet with a predetermined number of buckets on initialization.
+ *
+ * @param <T> A generic type, can be anything.
+ */
 public class FixedSizeHashSet<T> implements Collection<T> {
 
     private final Node<T>[] nodes;
@@ -122,8 +127,7 @@ public class FixedSizeHashSet<T> implements Collection<T> {
 
     @Override
     public String toString() {
-        return "FixedSizeHashSet{" + "nodes=" + Arrays.toString(nodes) + ", arrayLen=" + arrayLen + ", size="
-            + size + '}';
+        return "FixedSizeHashSet{" + "nodes=" + Arrays.toString(nodes) + ", arrayLen=" + arrayLen + ", size=" + size + '}';
     }
 
     private static class Node<E> {

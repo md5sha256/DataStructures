@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
                                        .mode(Mode.SingleShotTime)
                                        .warmupMode(WarmupMode.INDI)
                                        .forks(2)
-                                       .warmupIterations(2)
+                                       .warmupIterations(10)
                                        .measurementIterations(5)
                                        .jvmArgs("-Xint")
                                        .include(BaseBenchmark.class.getSimpleName())
@@ -41,8 +41,8 @@ import java.util.concurrent.TimeUnit;
     }
 
     @State(Scope.Benchmark) public static class ArrayValues {
-        @Param({"10", "100", "1000","10000"})
-        //@Param({"100000"})
+        //@Param({"10", "100", "1000","10000"})
+        @Param({"100000"})
         public int collectionSize;
         public final int sampleSize = 1000;
 
@@ -50,8 +50,8 @@ import java.util.concurrent.TimeUnit;
 
     @State(Scope.Benchmark) public static class GlobalValues {
 
-        @Param({"10", "100", "1000","10000"})
-        //@Param({"100000"})
+        //@Param({"10", "100", "1000","10000"})
+        @Param({"100000"})
         public int collectionSize;
         public final int sampleSize = 1000;
 
