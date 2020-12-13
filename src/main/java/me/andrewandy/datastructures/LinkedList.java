@@ -124,8 +124,8 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     @Override
-    public void addAll(final E[] iterable) {
-        for (final E e : iterable) {
+    public void addAll(final E[] array) {
+        for (final E e : array) {
             add(e);
         }
     }
@@ -174,8 +174,8 @@ public class LinkedList<E> implements Collection<E> {
         }
     }
 
-    @Override public void removeAll(final E[] iterable) {
-        for (final E e : iterable) {
+    @Override public void removeAll(final E[] array) {
+        for (final E e : array) {
             remove(e);
         }
     }
