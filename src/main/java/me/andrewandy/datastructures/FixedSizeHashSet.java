@@ -74,7 +74,11 @@ public class FixedSizeHashSet<T> implements Collection<T> {
             return false;
         }
         final Node<T> node = getNode(object);
-        return node.chain.removeFirst(object);
+        if (node.chain.removeFirst(object)) {
+            this.size--;
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -2,9 +2,7 @@ package me.andrewandy.datastructures;
 
 import me.andrewandy.datastructures.benchmark.ArrayBenchmark;
 import me.andrewandy.datastructures.benchmark.BaseBenchmark;
-import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
@@ -17,21 +15,31 @@ import org.openjdk.jmh.runner.options.WarmupMode;
 
 import java.util.concurrent.TimeUnit;
 
-@OutputTimeUnit(TimeUnit.MILLISECONDS) @Fork(value = 2) public class Main {
+/**
+ * Main class of the program, change values here to alter the test parameters.
+ */
+public class Main {
 
     public static void main(final String[] args) {
         final OptionsBuilder builder = new OptionsBuilder();
-        final Options options = builder.timeUnit(TimeUnit.MILLISECONDS)
-                                       .mode(Mode.SingleShotTime)
+        final Options options = builder
+                                       // Output everything in Milliseconds | Single Shot as we are testing the time for one invocation
+                                       .timeUnit(TimeUnit.MILLISECONDS).mode(Mode.SingleShotTime)
+                                       // Do the individual warmup for every benchmark
                                        .warmupMode(WarmupMode.INDI)
-                                       .forks(2)
-                                       .warmupIterations(10)
+                                       // We want two forks + 10 iterations to warm up the GC
+                                       .forks(2).warmupIterations(10)
+                                       // 5 trials
                                        .measurementIterations(5)
+                                       // Disable the JIT compiler; force jvm to run the benchmark code in interpreter mode
                                        .jvmArgs("-Xint")
+                                       // Include both the base and array benchmarks
                                        .include(BaseBenchmark.class.getSimpleName())
                                        .include(ArrayBenchmark.class.getSimpleName())
+                                       // Output results in CSV format
                                        .resultFormat(ResultFormatType.CSV)
                                        .build();
+        // Run the test!
         try {
             new Runner(options).run();
         } catch (final RunnerException ex) {
@@ -40,30 +48,57 @@ import java.util.concurrent.TimeUnit;
 
     }
 
-    @State(Scope.Benchmark) public static class ArrayValues {
-        //@Param({"10", "100", "1000","10000"})
-        @Param({"100000"})
+
+    /**
+     * State which hold benchmark parameters for the benchmark of the Java primitive array.
+     * @see ArrayBenchmark
+     */
+    @State(Scope.Benchmark)
+    public static class ArrayValues {
+        // Test values from 10 to 100k. These represent the initial size of the collection
+        // Before any of the tests are performed.
+        @Param({"10", "100", "1000", "10000", "100000"})
         public int collectionSize;
-        public final int sampleSize = 1000;
+
+        // Represents how many values should be tested. I.e how many elements to add, remove or search.
+        @Param("1000")
+        public int sampleSize;
 
     }
 
-    @State(Scope.Benchmark) public static class GlobalValues {
 
-        //@Param({"10", "100", "1000","10000"})
-        @Param({"100000"})
+    /**
+     * State which hold benchmark parameters + convenience method to instantiate collections.
+     * @see BaseBenchmark
+     */
+    @State(Scope.Benchmark)
+    public static class GlobalValues {
+
+        // Test values from 10 to 100k. These represent the initial size of the collection
+        // Before any of the tests are performed.
+        @Param({"10", "100", "1000", "10000", "100000"})
         public int collectionSize;
-        public final int sampleSize = 1000;
 
+        // Represents how many values should be tested. I.e how many elements to add, remove or search.
+        @Param("1000")
+        public int sampleSize;
+
+        // Parameter for the name of the collection. Accepted values are "LinkedList" and "FixedSizeHashSet"
         @Param({"LinkedList", "FixedSizeHashSet"})
         public String collection;
 
-        public <T> Collection<T> newCollection() {
+        /**
+         * Obtain a new instance of a collection specified by {@link #collection}. The {@link #collectionSize} parameter
+         * will be utilized for collections which support it.
+         *
+         * @param <T> A generic type, can be anything.
+         * @return Returns a new instance of an {@link Collection}
+         * @throws IllegalArgumentException Thrown if {@link #collection} is invalid.
+         */
+        public <T> Collection<T> newCollection() throws IllegalArgumentException{
             switch (collection) {
                 case "LinkedList":
                     return new LinkedList<>();
-                case "DynamicHashSet":
-                    return new DynamicHashSet<>(collectionSize, 0.75f);
                 case "FixedSizeHashSet":
                     return new FixedSizeHashSet<>(collectionSize);
                 default:

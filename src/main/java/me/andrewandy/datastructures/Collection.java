@@ -34,7 +34,6 @@ public interface Collection<T> extends Iterable<T> {
 
     void addAll(T[] iterable);
 
-
     boolean remove(T t);
 
     void removeAll(Collection<T> collection);

@@ -10,30 +10,39 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.SplittableRandom;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Benchmark for the primitive array in Java
+ * Methods annotated with {@link Benchmark} test
+ * a specific operation; These methods are equivalent
+ * to those in {@link BaseBenchmark}, albeit with inlined logic.
+ */
 @CompilerControl(CompilerControl.Mode.EXCLUDE)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class ArrayBenchmark {
 
     @Benchmark
     public void testAdd(final ContainsState state) {
-        for (Integer i : state.dynamicSample) {
+        // Loop over the test sample
+        for (Integer i : state.randomValues) {
             Integer[] copy = new Integer[state.collection.length + 1];
+            // Copy over existing elements
             for (int index = 0; index < state.collection.length; index++) {
                 copy[index] = state.collection[index];
             }
+            // Set the index at last value to the target value to be inserted.
             copy[state.collection.length] = i;
+            // Re-assign the object reference to the copied array
             state.collection = copy;
         }
     }
 
     @Benchmark
-    public void removeFirst(final ContainsState state) {
-        for (Integer toTest : state.removeDynamicSample) {
+    public void removeFirstOccurrence(final ContainsState state) {
+        for (Integer toTest : state.randomValues) {
             int toRemove = -1;
-            //System.out.println("*** " + Arrays.toString(state.collection));
             for (int index = 0; index < state.collection.length; index++) {
                 if (Objects.equals(state.collection[index], toTest)) {
                     toRemove = index;
@@ -57,7 +66,7 @@ public class ArrayBenchmark {
 
     @Benchmark
     public void testContains(final ContainsState state) {
-        for (Integer toTest : state.dynamicSample) {
+        for (Integer toTest : state.randomValues) {
             for (int index = 0; index < state.collection.length; index++) {
                 if (Objects.equals(state.collection[index], toTest)) {
                     break;
@@ -69,9 +78,8 @@ public class ArrayBenchmark {
 
     @State(Scope.Benchmark)
     public static class ContainsState {
-        public Integer[] staticSample;
-        public Integer[] dynamicSample;
-        public Integer[] removeDynamicSample;
+        public Integer[] initialState;
+        public Integer[] randomValues;
         public Integer[] collection;
         private Main.ArrayValues values;
 
@@ -79,25 +87,17 @@ public class ArrayBenchmark {
         public void init(final Main.ArrayValues values) {
             this.values = values;
             this.collection = new Integer[values.collectionSize];
-
-            this.staticSample = new Integer[values.collectionSize];
-            final ThreadLocalRandom random = ThreadLocalRandom.current();
-            for (int index = 0; index < this.staticSample.length; index++) {
-                staticSample[index] = random.nextInt(Integer.MIN_VALUE, 0);
-            }
-            this.dynamicSample = new Integer[values.sampleSize];
-            this.removeDynamicSample = new Integer[values.sampleSize];
-            for (int index = 0; index < this.dynamicSample.length; index++) {
-                dynamicSample[index] = random.nextInt(1, Integer.MAX_VALUE);
-                removeDynamicSample[index] = dynamicSample[index];
-            }
-            removeDynamicSample[dynamicSample.length - 1] = staticSample[staticSample.length - 1];
+            final SplittableRandom random = new SplittableRandom();
+            this.initialState = random.ints(values.collectionSize, Integer.MIN_VALUE, 0).parallel().boxed()
+                                      .toArray(Integer[]::new);
+            this.randomValues =
+                random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed().toArray(Integer[]::new);
         }
 
         @Setup(Level.Iteration)
         public void reset() {
-            collection = new Integer[values.collectionSize];
-            System.arraycopy(staticSample, 0, this.collection, 0, collection.length);
+            this.collection = new Integer[values.collectionSize];
+            System.arraycopy(initialState, 0, this.collection, 0, collection.length);
         }
     }
 
