@@ -6,9 +6,9 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
- * Implementation of a doubly-linked list.
+ * Implementation of a doubly-linked list
  *
- * @param <E> A generic type, can be anything.
+ * @param <E> A generic type, can be anything
  */
 public class LinkedList<E> implements Collection<E> {
 
@@ -19,6 +19,11 @@ public class LinkedList<E> implements Collection<E> {
     public LinkedList() {
     }
 
+    /**
+     * Add an element to the tail of this list | Worst-Case Time Complexity = O(1)
+     *
+     * @param element The instance to append
+     */
     private void tailAdd(final E element) {
         switch (size) {
             case 0:
@@ -44,25 +49,48 @@ public class LinkedList<E> implements Collection<E> {
         size++;
     }
 
+    /**
+     * Insert an element with respect to a given node.
+     * This method will instantiate a new node, append all relevant
+     * node references and increment {@link #size}.
+     * Worst-Case Time Complexity = O(1)
+     *
+     * @param prev    The previous node to take reference from
+     * @param element The instance to insert
+     * @return Returns the instantiated {@link Node} instance
+     */
     private Node<E> insertElement(final Node<E> prev, E element) {
+
         final Node<E> prevNext = prev.next;
+        // Instantiate new node
         final Node<E> newNode = new Node<>(element);
+        // Update node references
         newNode.previous = prev;
         prev.next = newNode;
         newNode.next = prevNext;
+        // If prevNext == null means this is the tail node
         if (prevNext == null) {
+            // Update tail reference
             this.tail = new Node<>();
             this.tail.previous = newNode;
             newNode.next = this.tail;
         } else {
+            // Update the 'previous' reference of the prev node.
             prevNext.previous = newNode;
         }
+        // Increment size
         this.size++;
         return newNode;
     }
 
+    /**
+     * Remove a given node | Time complexity = O(1)
+     *
+     * @param node The node instance to remove
+     */
     private void removeNode(final Node<E> node) {
         if (this.size == 0) {
+            // List is empty, don't need to remove anything.
             return;
         }
         final Node<E> prev = node.previous;
@@ -102,6 +130,7 @@ public class LinkedList<E> implements Collection<E> {
         }
     }
 
+    @Override
     public void add(final E element) {
         tailAdd(element);
     }
@@ -167,7 +196,16 @@ public class LinkedList<E> implements Collection<E> {
         return this.size;
     }
 
-    @Override public boolean contains(final E element) {
+    /**
+     * Check whether a given element is in this list
+     * This is equivalent to checking if {@link #indexOf(Object)} returns -1.
+     * Worst-Case Time Complexity = O(n)
+     *
+     * @param element The instance to check
+     * @return Returns true if the element exists, false otherwise.
+     */
+    @Override
+    public boolean contains(final E element) {
         return indexOf(element) != -1;
     }
 
@@ -210,6 +248,13 @@ public class LinkedList<E> implements Collection<E> {
         removeNode(node);
     }
 
+    /**
+     * Get the first index of an element | Worst-Case Time Complexity = O(n)
+     *
+     * @param element The instance of the element
+     * @return Returns the index of the element (0 being the head) or -1 if the
+     * element is not in this list.
+     */
     public int indexOf(final E element) {
         if (this.size == 0) {
             return -1;
@@ -224,6 +269,14 @@ public class LinkedList<E> implements Collection<E> {
         return -1;
     }
 
+    /**
+     * Get a node at a specific index | Worst-Case Time Complexity = O(n), n being the index
+     *
+     * @param index The index, must be within 0 and 1 - {@link #size()}
+     * @return Returns the {@link Node} reference at a specific index.
+     * @throws IndexOutOfBoundsException Thrown if the index parameter is less than 0
+     *                                   or if it is greater than the size of the list minus 1
+     */
     private Node<E> getNode(final int index) {
         if (index == 0) {
             return head;
@@ -233,6 +286,7 @@ public class LinkedList<E> implements Collection<E> {
             throw new IndexOutOfBoundsException();
         }
         Node<E> node = head;
+        // Traverse through the list
         for (int i = 0; i < index; i++) {
             node = node.next;
         }
@@ -255,7 +309,13 @@ public class LinkedList<E> implements Collection<E> {
         return Arrays.toString(arr);
     }
 
-
+    /**
+     * Represents an object which can be chained together (through object references). This class
+     * holds a "next" and "previous" node references alongside the value of this "node". This class is
+     * used to implement traversal through an {@link LinkedList}
+     *
+     * @param <E> A generic type, can be anything.
+     */
     private static class Node<E> {
 
         Node<E> next;
@@ -267,7 +327,6 @@ public class LinkedList<E> implements Collection<E> {
         }
 
         public Node() {
-
         }
 
         @Override
@@ -279,6 +338,10 @@ public class LinkedList<E> implements Collection<E> {
     }
 
 
+    /**
+     * Implementation of an iterator. This class is NOT thread-safe, however, it will not attempt
+     * to check for concurrent modification by any means.
+     */
     private class NodeIterator implements Iterator<E> {
 
         private Node<E> current;
@@ -287,25 +350,36 @@ public class LinkedList<E> implements Collection<E> {
             this.current = head;
         }
 
-        @Override public boolean hasNext() {
+        @Override
+        public boolean hasNext() {
+            // Check whether the current node is null or the 'tail' node
             return this.current != null && this.current.next != null;
         }
 
-        @Override public E next() {
+        @Override
+        public E next() {
             if (!hasNext()) {
+                // Cannot traverse to the next node
                 throw new NoSuchElementException();
             }
+            // Save the current value to return
             final E val = current.val;
+            // Move to the next node
             current = current.next;
             return val;
         }
 
         @Override public void remove() {
             if (current == null) {
+                // If the current node is a null reference, throw and error.
+                // At this point, the iterator should be considered invalid.
                 throw new NoSuchElementException();
             }
+            // Get the reference of the "next" node
             final Node<E> next = current.next;
+            // Remove the current node
             removeNode(current);
+            // Re-assign the object reference to the next node (which may be null)
             current = next;
         }
     }
