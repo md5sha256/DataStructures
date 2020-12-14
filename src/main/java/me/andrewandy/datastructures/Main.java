@@ -2,6 +2,7 @@ package me.andrewandy.datastructures;
 
 import me.andrewandy.datastructures.benchmark.ArrayBenchmark;
 import me.andrewandy.datastructures.benchmark.BaseBenchmark;
+import me.andrewandy.datastructures.benchmark.JavaBenchmark;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
@@ -13,6 +14,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.WarmupMode;
 
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,8 +36,9 @@ public class Main {
                                        // Disable the JIT compiler; force jvm to run the benchmark code in interpreter mode
                                        .jvmArgs("-Xint")
                                        // Include both the base and array benchmarks
-                                       .include(BaseBenchmark.class.getSimpleName())
                                        .include(ArrayBenchmark.class.getSimpleName())
+                                       .include(BaseBenchmark.class.getSimpleName())
+                                       .include(JavaBenchmark.class.getSimpleName())
                                        // Output results in CSV format
                                        .resultFormat(ResultFormatType.CSV)
                                        .build();
@@ -72,7 +75,7 @@ public class Main {
      * @see BaseBenchmark
      */
     @State(Scope.Benchmark)
-    public static class GlobalValues {
+    public static class BaseValues {
 
         // Test values from 10 to 100k. These represent the initial size of the collection
         // Before any of the tests are performed.
@@ -107,4 +110,45 @@ public class Main {
         }
     }
 
+    /**
+     * State which hold benchmark parameters + convenience method to instantiate collections.
+     * @see JavaBenchmark
+     */
+    @State(Scope.Benchmark)
+    public static class JavaValues {
+
+        // Test values from 10 to 100k. These represent the initial size of the collection
+        // Before any of the tests are performed.
+        @Param({"10", "100", "1000", "10000", "100000"})
+        public int collectionSize;
+
+        // Represents how many values should be tested. I.e how many elements to add, remove or search.
+        @Param("1000")
+        public int sampleSize;
+
+        // Parameter for the name of the collection. Accepted values are "ArrayList", "LinkedList" and "HashSet"
+        @Param({"ArrayList", "LinkedList", "HashSet"})
+        public String collection;
+
+        /**
+         * Obtain a new instance of a collection specified by {@link #collection}. The {@link #collectionSize} parameter
+         * will be utilized for collections which support it.
+         *
+         * @param <T> A generic type, can be anything.
+         * @return Returns a new instance of an {@link Collection}
+         * @throws IllegalArgumentException Thrown if {@link #collection} is invalid.
+         */
+        public <T> java.util.Collection<T> newCollection() throws IllegalArgumentException {
+            switch (collection) {
+                case "ArrayList":
+                    return new java.util.ArrayList<>();
+                case "LinkedList":
+                    return new java.util.LinkedList<>();
+                case "HashSet":
+                    return new java.util.HashSet<>();
+                default:
+                    throw new IllegalArgumentException("Unknown Collection: " + collection);
+            }
+        }
+    }
 }

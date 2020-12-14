@@ -1,14 +1,9 @@
 package me.andrewandy.datastructures.benchmark;
 
-import me.andrewandy.datastructures.Collection;
+import java.util.Arrays;
+import java.util.Collection;
 import me.andrewandy.datastructures.Main;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.CompilerControl;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.*;
 
 import java.util.SplittableRandom;
 import java.util.concurrent.TimeUnit;
@@ -22,13 +17,14 @@ import java.util.concurrent.TimeUnit;
  */
 @CompilerControl(CompilerControl.Mode.EXCLUDE)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class BaseBenchmark {
+public class JavaBenchmark {
 
     /**
      * Test adding values to the collection
      */
     @Benchmark
     public void testAdd(final ContainsState state) {
+        // Do not use Collection#addAll as only some collections support this optimization
         for (Integer i : state.randomValues) {
             state.collection.add(i);
         }
@@ -40,7 +36,7 @@ public class BaseBenchmark {
     @Benchmark
     public void removeFirstOccurrence(final ContainsState state) {
         for (Integer i : state.randomValues) {
-            state.collection.removeFirst(i);
+            state.collection.remove(i);
         }
     }
 
@@ -49,6 +45,7 @@ public class BaseBenchmark {
      */
     @Benchmark
     public void testSearch(final ContainsState state) {
+        // Do not use Collection#containsAll as only some collections support this optimization
         for (final Integer i : state.randomValues) {
             state.collection.contains(i);
         }
@@ -62,18 +59,20 @@ public class BaseBenchmark {
     public static class ContainsState {
 
         public Integer[] initialState;
+        private Collection<Integer> initialStateColl;
         public Integer[] randomValues;
 
         public Collection<Integer> collection;
 
         @Setup(Level.Trial)
-        public void init(final Main.BaseValues values) {
+        public void init(final Main.JavaValues values) {
             this.collection = values.newCollection();
             // Use a splittable random so we can generate values in a parallel manner.
             final SplittableRandom random = new SplittableRandom();
 
             this.initialState = random.ints(values.collectionSize, Integer.MIN_VALUE, 0).parallel().boxed()
                                       .toArray(Integer[]::new);
+            this.initialStateColl = Arrays.asList(this.initialState);
 
             this.randomValues = random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed()
                       .toArray(Integer[]::new);
@@ -88,9 +87,7 @@ public class BaseBenchmark {
             // Clear the collection
             this.collection.clear();
             // Copy all elements from the initial state over
-            for (Integer integer : this.initialState) {
-                this.collection.add(integer);
-            }
+            this.collection.addAll(this.initialStateColl);
         }
     }
 
