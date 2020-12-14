@@ -1,0 +1,6 @@
+
+Lists of 4 third-party dependencies.
+     (The MIT License) JOpt Simple (net.sf.jopt-simple:jopt-simple:4.6 - http://pholser.github.com/jopt-simple)
+     (The Apache Software License, Version 2.0) Commons Math (org.apache.commons:commons-math3:3.2 - http://commons.apache.org/proper/commons-math/)
+     (GNU General Public License (GPL), version 2, with the Classpath exception) JMH Core (org.openjdk.jmh:jmh-core:1.26 - http://openjdk.java.net/projects/code-tools/jmh/jmh-core/)
+     (GNU General Public License (GPL), version 2, with the Classpath exception) JMH Generators: Annotation Processors (org.openjdk.jmh:jmh-generator-annprocess:1.26 - http://openjdk.java.net/projects/code-tools/jmh/jmh-generator-annprocess/)
