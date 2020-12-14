@@ -135,6 +135,11 @@ public class LinkedList<E> implements Collection<E> {
         tailAdd(element);
     }
 
+    public void add(final int index, final E element) {
+        final Node<E> node = getNode(index);
+        insertElement(node, element);
+    }
+
     @Override
     public boolean remove(final E e) {
         if (this.size == 0) {
@@ -149,6 +154,24 @@ public class LinkedList<E> implements Collection<E> {
             current = current.next;
         }
         return this.size != oldSize;
+    }
+    
+    public void remove(final int index) {
+        if (index < 0 || index > size - 1) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == size - 1) {
+            removeNode(tail);
+            return;
+        } else if (index == 0) {
+            removeNode(head);
+            return;
+        }
+        Node<E> node = head;
+        for (int i = 0; i < index; i++) {
+            node = node.next;
+        }
+        removeNode(node);
     }
 
     @Override
@@ -240,29 +263,6 @@ public class LinkedList<E> implements Collection<E> {
             current = current.next;
         }
         return current.val;
-    }
-
-    public void add(final int index, final E element) {
-        final Node<E> node = getNode(index);
-        insertElement(node, element);
-    }
-
-    public void remove(final int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (index == size - 1) {
-            removeNode(tail);
-            return;
-        } else if (index == 0) {
-            removeNode(head);
-            return;
-        }
-        Node<E> node = head;
-        for (int i = 0; i < index; i++) {
-            node = node.next;
-        }
-        removeNode(node);
     }
 
     /**
