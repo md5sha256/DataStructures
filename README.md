@@ -1,6 +1,6 @@
 # Compilation
 
-This project utilizes [Apache Maven](https://maven.apache.org/)as it's build tool. To compile the project into a JAR executable, please run `./mvnw package`. The executable can be found under the `target` folder.
+This project utilizes [Apache Maven](https://maven.apache.org/) as it's build tool. To compile the project into a JAR executable, please run `./mvnw package`. The executable can be found under the `target` folder.
 <br>
 
 <strong>This project require Java 8 or above</strong>
