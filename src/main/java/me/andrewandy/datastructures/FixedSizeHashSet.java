@@ -48,6 +48,7 @@ public class FixedSizeHashSet<T> implements Collection<T> {
      * Obtain the potential {@link Bucket} instance of a given object. The bucket
      * returned by this method does not guarantee that the object will reside in this
      * bucket, only that it SHOULD resize here based on it's @{@link #hash(Object)}
+     * Worst-Case Time Complexity = O(n/m), n = number of elements, m = number of buckets
      *
      * @param object The object instance
      * @return Returns the bucket the object should reside in or null if the object passed
@@ -60,6 +61,11 @@ public class FixedSizeHashSet<T> implements Collection<T> {
         return this.table[hash(object) % this.table.length];
     }
 
+    /**
+     * {@inheritDoc}
+     * Worst-Case Time Complexity = O(n/m), n = number of elements, m = number of buckets
+     * @param object
+     */
     @Override
     public void add(final T object) {
         if (object == null) {
@@ -76,6 +82,12 @@ public class FixedSizeHashSet<T> implements Collection<T> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Worst-Case Time Complexity = O(n/m), n = number of elements, m = number of buckets
+     * @param object
+     * @return
+     */
     @Override
     public boolean contains(final T object) {
         // Check if the object isn't null, that the set is not empty and the theoretical bucket's chain
@@ -108,6 +120,12 @@ public class FixedSizeHashSet<T> implements Collection<T> {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Worst-Case Time Complexity = O(n/m), n = number of elements, m = number of buckets
+     * @param object
+     * @return
+     */
     @Override
     public boolean remove(final T object) {
         if (object == null || this.size == 0) {

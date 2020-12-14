@@ -23,10 +23,16 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class ArrayBenchmark {
 
+    /**
+     * Test appending values to an array (tail insertion)
+     */
     @Benchmark
     public void testAdd(final ContainsState state) {
         // Loop over the test sample
         for (Integer i : state.randomValues) {
+            // Worst-Case Time Complexity = O(2n + 1) = O(n)
+
+            // Create a temp array
             Integer[] copy = new Integer[state.collection.length + 1];
             // Copy over existing elements
             for (int index = 0; index < state.collection.length; index++) {
@@ -39,12 +45,18 @@ public class ArrayBenchmark {
         }
     }
 
+    /**
+     * Test removing the first occurrence of an element from an array.
+     */
     @Benchmark
     public void removeFirstOccurrence(final ContainsState state) {
         for (Integer toTest : state.randomValues) {
+            // Worst-Case Time Complexity = O(2n - 1) = O(n)
+
             int toRemove = -1;
             for (int index = 0; index < state.collection.length; index++) {
                 if (Objects.equals(state.collection[index], toTest)) {
+                    // Mark index to remove
                     toRemove = index;
                     break;
                 }
@@ -52,10 +64,12 @@ public class ArrayBenchmark {
             if (toRemove == -1) {
                 continue;
             }
+            // Create temp array
             final Integer[] newArr = new Integer[state.collection.length - 1];
             int newIndex = 0;
             for (int index = 0; index < newArr.length; index++) {
                 if (index == toRemove) {
+                    // Skip index to remove
                     continue;
                 }
                 newArr[newIndex++] = state.collection[index];
@@ -64,10 +78,17 @@ public class ArrayBenchmark {
         }
     }
 
+    /**
+     * Test performing a search (lookup) for a given element in an array
+     */
     @Benchmark
-    public void testContains(final ContainsState state) {
+    public void testSearch(final ContainsState state) {
         for (Integer toTest : state.randomValues) {
+            // Worst-Case Time Complexity = O(n)
+
+            // Loop over all elements
             for (int index = 0; index < state.collection.length; index++) {
+                // Check if object equals target | Worst-Case Time Complexity = O(1)
                 if (Objects.equals(state.collection[index], toTest)) {
                     break;
                 }
@@ -76,8 +97,12 @@ public class ArrayBenchmark {
     }
 
 
+    /**
+     * Data values generated for each test
+     */
     @State(Scope.Benchmark)
     public static class ContainsState {
+
         public Integer[] initialState;
         public Integer[] randomValues;
         public Integer[] collection;
@@ -87,17 +112,24 @@ public class ArrayBenchmark {
         public void init(final Main.ArrayValues values) {
             this.values = values;
             this.collection = new Integer[values.collectionSize];
+            // Use a splittable random so we can generate values in a parallel manner.
             final SplittableRandom random = new SplittableRandom();
+
             this.initialState = random.ints(values.collectionSize, Integer.MIN_VALUE, 0).parallel().boxed()
                                       .toArray(Integer[]::new);
-            this.randomValues =
-                random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed().toArray(Integer[]::new);
+            this.randomValues = random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed()
+                                      .toArray(Integer[]::new);
         }
 
+        /**
+         * Reset the {@link #collection} after every test trial/run
+         */
         @Setup(Level.Iteration)
         public void reset() {
-            this.collection = new Integer[values.collectionSize];
-            System.arraycopy(initialState, 0, this.collection, 0, collection.length);
+            // Create a new array
+            this.collection = new Integer[this.values.collectionSize];
+            // Copy the initial values over
+            System.arraycopy(this.initialState, 0, this.collection, 0, this.collection.length);
         }
     }
 

@@ -114,7 +114,7 @@ Icon
 # Thumbnails
 ._*
 
-# Files that might appear in the root of a volume
+# Files that might appear in the root of sanityCheck volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -162,4 +162,6 @@ $RECYCLE.BIN/
 /target
 ./target/*
 dependency-reduced-pom.xml
+
+*.csv
 

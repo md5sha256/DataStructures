@@ -24,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class BaseBenchmark {
 
+    /**
+     * Test adding values to the collection
+     */
     @Benchmark
     public void testAdd(final ContainsState state) {
         for (Integer i : state.randomValues) {
@@ -31,6 +34,9 @@ public class BaseBenchmark {
         }
     }
 
+    /**
+     * Test removing the first occurrence of an element from a collection
+     */
     @Benchmark
     public void removeFirstOccurrence(final ContainsState state) {
         for (Integer i : state.randomValues) {
@@ -38,39 +44,52 @@ public class BaseBenchmark {
         }
     }
 
+    /**
+     * Test performing a search (lookup) for a given element on a collection
+     */
     @Benchmark
-    public void testContains(final ContainsState state) {
+    public void testSearch(final ContainsState state) {
         for (final Integer i : state.randomValues) {
             state.collection.contains(i);
         }
     }
 
 
+    /**
+     * Data values generated for each test
+     */
     @State(Scope.Benchmark)
     public static class ContainsState {
+
         public Integer[] initialState;
         public Integer[] randomValues;
 
         public Collection<Integer> collection;
-        private Main.GlobalValues values;
 
         @Setup(Level.Trial)
         public void init(final Main.GlobalValues values) {
-            this.values = values;
             this.collection = values.newCollection();
+            // Use a splittable random so we can generate values in a parallel manner.
             final SplittableRandom random = new SplittableRandom();
+
             this.initialState = random.ints(values.collectionSize, Integer.MIN_VALUE, 0).parallel().boxed()
                                       .toArray(Integer[]::new);
-            this.randomValues =
-                random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed().toArray(Integer[]::new);
+
+            this.randomValues = random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed()
+                      .toArray(Integer[]::new);
 
         }
 
+        /**
+         * Reset the {@link #collection} after every test trial/run
+         */
         @Setup(Level.Iteration)
         public void reset() {
-            collection.clear();
-            for (int index = 0; index < values.collectionSize; index++) {
-                this.collection.add(initialState[index]);
+            // Clear the collection
+            this.collection.clear();
+            // Copy all elements from the initial state over
+            for (Integer integer : this.initialState) {
+                this.collection.add(integer);
             }
         }
     }
