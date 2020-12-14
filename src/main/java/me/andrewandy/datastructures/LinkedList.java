@@ -184,14 +184,15 @@ public class LinkedList<E> implements Collection<E> {
         switch (this.size) {
             case 0:
                 return;
-            default:
-                this.tail = null;
             case 1:
                 this.head = null;
+            default:
+                this.tail = null;
         }
         size = 0;
     }
 
+    @Override
     public int size() {
         return this.size;
     }
@@ -207,6 +208,22 @@ public class LinkedList<E> implements Collection<E> {
     @Override
     public boolean contains(final E element) {
         return indexOf(element) != -1;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new NodeIterator();
+    }
+
+    @Override
+    public String toString() {
+        final Object[] arr = new Object[this.size];
+        Node<E> node = head;
+        for (int index = 0; index < this.size && node != null; index++) {
+            arr[index] = node.val;
+            node = node.next;
+        }
+        return Arrays.toString(arr);
     }
 
     public E get(final int index) {
@@ -291,22 +308,6 @@ public class LinkedList<E> implements Collection<E> {
             node = node.next;
         }
         return node;
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return new NodeIterator();
-    }
-
-    @Override
-    public String toString() {
-        final Object[] arr = new Object[this.size];
-        Node<E> node = head;
-        for (int index = 0; index < this.size && node != null; index++) {
-            arr[index] = node.val;
-            node = node.next;
-        }
-        return Arrays.toString(arr);
     }
 
     /**
