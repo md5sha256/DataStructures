@@ -50,15 +50,25 @@ public class ArrayBenchmark {
      */
     @Benchmark
     public void removeFirstOccurrence(final ContainsState state) {
-        for (Integer toTest : state.randomValues) {
+        for (Integer toTest : state.initialStateReversed) {
             // Worst-Case Time Complexity = O(2n - 1) = O(n)
 
             int toRemove = -1;
-            for (int index = 0; index < state.collection.length; index++) {
-                if (Objects.equals(state.collection[index], toTest)) {
-                    // Mark index to remove
-                    toRemove = index;
-                    break;
+            if (toTest == null) {
+                for (int index = 0; index < state.collection.length; index++) {
+                    if (state.collection[index] == null) {
+                        // Mark index to remove
+                        toRemove = index;
+                        break;
+                    }
+                }
+            } else {
+                for (int index = 0; index < state.collection.length; index++) {
+                    if (state.collection[index].equals(toTest)) {
+                        // Mark index to remove
+                        toRemove = index;
+                        break;
+                    }
                 }
             }
             if (toRemove == -1) {
@@ -86,11 +96,21 @@ public class ArrayBenchmark {
         for (Integer toTest : state.randomValues) {
             // Worst-Case Time Complexity = O(n)
 
-            // Loop over all elements
-            for (int index = 0; index < state.collection.length; index++) {
-                // Check if object equals target | Worst-Case Time Complexity = O(1)
-                if (Objects.equals(state.collection[index], toTest)) {
-                    break;
+            if (toTest == null) {
+                // Loop over all elements
+                for (int index = 0; index < state.collection.length; index++) {
+                    // Check if object equals target | Worst-Case Time Complexity = O(1)
+                    if (state.collection[index] == null) {
+                        break;
+                    }
+                }
+            } else {
+                // Loop over all elements
+                for (int index = 0; index < state.collection.length; index++) {
+                    // Check if object equals target | Worst-Case Time Complexity = O(1)
+                    if (toTest.equals(state.collection[index])) {
+                        break;
+                    }
                 }
             }
         }
@@ -105,6 +125,7 @@ public class ArrayBenchmark {
 
         public Integer[] initialState;
         public Integer[] randomValues;
+        public Integer[] initialStateReversed;
         public Integer[] collection;
         private Main.ArrayValues values;
 
@@ -118,7 +139,15 @@ public class ArrayBenchmark {
             this.initialState = random.ints(values.collectionSize, Integer.MIN_VALUE, 0).parallel().boxed()
                                       .toArray(Integer[]::new);
             this.randomValues = random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed()
-                                      .toArray(Integer[]::new);
+                      .toArray(Integer[]::new);
+
+            // Populate reversed initial state for use in array removals.
+            this.initialStateReversed = new Integer[values.sampleSize];
+            int j = values.collectionSize - 1;
+            for (int i = 0; i < initialStateReversed.length; i++) {
+                this.initialStateReversed[i] = j == -1 ? 1 : this.initialState[j--];
+            }
+
         }
 
         /**

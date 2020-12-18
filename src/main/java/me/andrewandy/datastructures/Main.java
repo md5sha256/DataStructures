@@ -14,7 +14,6 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.WarmupMode;
 
-import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,12 +28,14 @@ public class Main {
                                        .timeUnit(TimeUnit.MILLISECONDS).mode(Mode.SingleShotTime)
                                        // Do the individual warmup for every benchmark
                                        .warmupMode(WarmupMode.INDI)
-                                       // We want two forks + 10 iterations to warm up the GC
+                                       // We want two forks + 10 iterations to warm up the jvm
                                        .forks(2).warmupIterations(10)
                                        // 5 trials
                                        .measurementIterations(5)
                                        // Disable the JIT compiler; force jvm to run the benchmark code in interpreter mode
                                        .jvmArgs("-Xint")
+                                       // Don't invoke GC between measurements
+                                       .shouldDoGC(false)
                                        // Include both the base and array benchmarks
                                        .include(ArrayBenchmark.class.getSimpleName())
                                        .include(BaseBenchmark.class.getSimpleName())
@@ -87,7 +88,7 @@ public class Main {
         public int sampleSize;
 
         // Parameter for the name of the collection. Accepted values are "LinkedList" and "FixedSizeHashSet"
-        @Param({"LinkedList", "FixedSizeHashSet"})
+        @Param({/*"LinkedList",*/ "FixedSizeHashSet"})
         public String collection;
 
         /**
@@ -127,7 +128,7 @@ public class Main {
         public int sampleSize;
 
         // Parameter for the name of the collection. Accepted values are "ArrayList", "LinkedList" and "HashSet"
-        @Param({"ArrayList", "LinkedList", "HashSet"})
+        @Param({"LinkedList", "HashSet"})
         public String collection;
 
         /**

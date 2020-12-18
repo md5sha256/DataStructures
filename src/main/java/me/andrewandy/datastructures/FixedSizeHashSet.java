@@ -74,8 +74,10 @@ public class FixedSizeHashSet<T> implements Collection<T> {
         // Get the bucket the object should reside in
         final Bucket<T> bucket = getBucket(object);
         // Check if the chain contains the object
+        // Worst-Case Time Complexity = O(n)
         if (!bucket.chain.contains(object)) {
             // Add object to the chain
+            // Worst-Case Time Complexity = O(1)
             bucket.chain.add(object);
             // Increment size
             this.size++;
@@ -131,7 +133,10 @@ public class FixedSizeHashSet<T> implements Collection<T> {
         if (object == null || this.size == 0) {
             return false;
         }
+        // Obtain bucket | Worst-Case Time Complexity = O(1)
         final Bucket<T> bucket = getBucket(object);
+        // Remove object from chain if present
+        // Worst-Case Time Complexity = O(n)
         if (bucket.chain.removeFirst(object)) {
             this.size--;
             return true;

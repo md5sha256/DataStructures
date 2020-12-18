@@ -146,12 +146,18 @@ public class LinkedList<E> implements Collection<E> {
             return false;
         }
         int oldSize = this.size;
-        Node<E> current = head;
-        while (current != null) {
-            if (Objects.equals(current.val, e)) {
-                removeNode(current);
+        if (e == null) {
+            for (Node<E> current = head; current != null; current = current.next) {
+                if (current.val == null) {
+                    removeNode(current);
+                }
             }
-            current = current.next;
+        } else {
+            for (Node<E> current = head; current != null; current = current.next) {
+                if (e.equals(current.val)) {
+                    removeNode(current);
+                }
+            }
         }
         return this.size != oldSize;
     }
@@ -176,19 +182,22 @@ public class LinkedList<E> implements Collection<E> {
 
     @Override
     public boolean removeFirst(final E e) {
-        if (this.size == 0) {
-            return false;
-        }
-        int oldSize = this.size;
-        Node<E> current = head;
-        while (current != null) {
-            if (Objects.equals(current.val, e)) {
-                removeNode(current);
-                break;
+        if (e == null) {
+            for (Node<E> node = head; node != null; node = node.next) {
+                if (node.val == null) {
+                    removeNode(node);
+                    return true;
+                }
             }
-            current = current.next;
+        } else {
+            for (Node<E> node = head; node != null; node = node.next) {
+                if (e.equals(node.val)) {
+                    removeNode(node);
+                    return true;
+                }
+            }
         }
-        return this.size != oldSize;
+        return false;
     }
 
     @Override public void removeAll(final Collection<E> collection) {
@@ -250,19 +259,7 @@ public class LinkedList<E> implements Collection<E> {
     }
 
     public E get(final int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (index == 0) {
-            return head.val;
-        } else if (index == this.size - 1) {
-            return tail.val;
-        }
-        Node<E> current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.next;
-        }
-        return current.val;
+        return getNode(index).val;
     }
 
     /**
@@ -277,11 +274,20 @@ public class LinkedList<E> implements Collection<E> {
             return -1;
         }
         Node<E> current = head;
-        for (int i = 0; current != null; i++) {
-            if (Objects.equals(current.val, element)) {
-                return i;
+        if (element == null) {
+            for (int i = 0; current != null; i++) {
+                if (current.val == null) {
+                    return i;
+                }
+                current = current.next;
             }
-            current = current.next;
+        } else {
+            for (int i = 0; current != null; i++) {
+                if (element.equals(current.val)) {
+                    return i;
+                }
+                current = current.next;
+            }
         }
         return -1;
     }
@@ -302,10 +308,18 @@ public class LinkedList<E> implements Collection<E> {
         } else if (index + 1 > size) {
             throw new IndexOutOfBoundsException();
         }
-        Node<E> node = head;
-        // Traverse through the list
-        for (int i = 0; i < index; i++) {
-            node = node.next;
+        Node<E> node;
+        if (index > size / 2) {
+            node = tail;
+            // Traverse through the list
+            for (int i = size - 1; i > 0; i--) {
+                node = node.previous;
+            }
+        } else {
+            node = head;
+            for (int i = 0; i < index; i++) {
+                node = node.next;
+            }
         }
         return node;
     }
@@ -319,8 +333,8 @@ public class LinkedList<E> implements Collection<E> {
      */
     private static class Node<E> {
 
-        Node<E> next;
-        Node<E> previous;
+        private Node<E> next;
+        private Node<E> previous;
         private E val;
 
         public Node(final E e) {

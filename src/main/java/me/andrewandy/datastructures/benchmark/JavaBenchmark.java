@@ -35,7 +35,7 @@ public class JavaBenchmark {
      */
     @Benchmark
     public void removeFirstOccurrence(final ContainsState state) {
-        for (Integer i : state.randomValues) {
+        for (Integer i : state.initialStateReversed) {
             state.collection.remove(i);
         }
     }
@@ -61,6 +61,7 @@ public class JavaBenchmark {
         public Integer[] initialState;
         private Collection<Integer> initialStateColl;
         public Integer[] randomValues;
+        public Integer[] initialStateReversed;
 
         public Collection<Integer> collection;
 
@@ -76,6 +77,13 @@ public class JavaBenchmark {
 
             this.randomValues = random.ints(values.sampleSize, 1, Integer.MAX_VALUE).parallel().boxed()
                       .toArray(Integer[]::new);
+
+            // Populate reversed initial state for use in array removals.
+            this.initialStateReversed = new Integer[values.sampleSize];
+            int j = values.collectionSize - 1;
+            for (int i = 0; i < initialStateReversed.length; i++) {
+                this.initialStateReversed[i] = j == -1 ? 1 : this.initialState[j--];
+            }
 
         }
 
