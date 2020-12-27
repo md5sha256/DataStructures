@@ -34,7 +34,7 @@ public class JavaBenchmark {
      * Test removing the first occurrence of an element from a collection
      */
     @Benchmark
-    public void removeFirstOccurrence(final ContainsState state) {
+    public void testRemoveFirstOccurrence(final ContainsState state) {
         for (Integer i : state.initialStateReversed) {
             state.collection.remove(i);
         }

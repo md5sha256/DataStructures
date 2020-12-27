@@ -88,7 +88,7 @@ public class Main {
         public int sampleSize;
 
         // Parameter for the name of the collection. Accepted values are "LinkedList" and "FixedSizeHashSet"
-        @Param({/*"LinkedList",*/ "FixedSizeHashSet"})
+        @Param({"LinkedList", "FixedSizeHashSet"})
         public String collection;
 
         /**

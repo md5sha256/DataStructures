@@ -49,7 +49,7 @@ public class ArrayBenchmark {
      * Test removing the first occurrence of an element from an array.
      */
     @Benchmark
-    public void removeFirstOccurrence(final ContainsState state) {
+    public void testRemoveFirstOccurrence(final ContainsState state) {
         for (Integer toTest : state.initialStateReversed) {
             // Worst-Case Time Complexity = O(2n - 1) = O(n)
 
