@@ -8,6 +8,7 @@ import org.openjdk.jmh.annotations.*;
 
 import java.util.SplittableRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.random.RandomGenerator;
 
 
 /**
@@ -70,7 +71,7 @@ public class JavaBenchmark {
         public void init(final Main.JavaValues values) {
             this.collection = values.newCollection();
             // Use a splittable random so we can generate values in a parallel manner.
-            final SplittableRandom random = new SplittableRandom();
+            final RandomGenerator random = new SplittableRandom();
 
             this.initialState = random.ints(values.collectionSize, Integer.MIN_VALUE, 0).parallel().boxed()
                                       .toArray(Integer[]::new);

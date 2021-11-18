@@ -25,25 +25,25 @@ public class LinkedList<E> implements Collection<E> {
      */
     private void tailAdd(final E element) {
         switch (size) {
-            case 0:
+            case 0 -> {
                 head = new Node<>(element);
                 tail = new Node<>();
                 head.next = tail;
                 tail.previous = head;
-                break;
-            case 1:
+            }
+            case 1 -> {
                 final Node<E> newNode = new Node<>(element);
                 head.next = newNode;
                 newNode.previous = head;
                 tail.previous = newNode;
-                break;
-            default:
+            }
+            default -> {
                 final Node<E> node = new Node<>(element);
                 tail.previous.next = node;
                 node.previous = tail.previous;
                 tail.previous = node;
                 node.next = tail;
-                break;
+            }
         }
         size++;
     }

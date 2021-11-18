@@ -11,6 +11,8 @@ import org.openjdk.jmh.annotations.State;
 
 import java.util.SplittableRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.random.RandomGenerator;
+import java.util.random.RandomGeneratorFactory;
 
 /**
  * Benchmark for the primitive array in Java
@@ -133,7 +135,7 @@ public class ArrayBenchmark {
             this.values = values;
             this.collection = new Integer[values.collectionSize];
             // Use a splittable random so we can generate values in a parallel manner.
-            final SplittableRandom random = new SplittableRandom();
+            final RandomGenerator random = new SplittableRandom();
 
             this.initialState = random.ints(values.collectionSize, Integer.MIN_VALUE, 0).parallel().boxed()
                                       .toArray(Integer[]::new);
