@@ -6,7 +6,6 @@ group 'com.github.md5sha256'
 version '1.0-SNAPSHOT'
 
 dependencies {
-    implementation project(':collections')
     implementation 'org.openjdk.jmh:jmh-core:1.32'
     implementation 'org.openjdk.jmh:jmh-generator-annprocess:1.32'
 }

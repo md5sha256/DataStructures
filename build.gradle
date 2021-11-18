@@ -20,6 +20,9 @@ subprojects {
     }
 
     tasks.withType(JavaCompile) {
+        javaToolchains.compilerFor {
+            JavaLanguageVersion.of(17)
+        }
         options.encoding = 'UTF-8'
         options.release.set(17)
     }

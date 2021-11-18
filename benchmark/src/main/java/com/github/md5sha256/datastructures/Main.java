@@ -1,5 +1,8 @@
-package com.github.md5sha256.datastructures.collections.benchmark;
+package com.github.md5sha256.datastructures;
 
+import com.github.md5sha256.datastructures.benchmark.ArrayBenchmark;
+import com.github.md5sha256.datastructures.benchmark.BaseBenchmark;
+import com.github.md5sha256.datastructures.benchmark.JavaBenchmark;
 import com.github.md5sha256.datastructures.collections.Collection;
 import com.github.md5sha256.datastructures.collections.FixedSizeHashSet;
 import com.github.md5sha256.datastructures.collections.LinkedList;
