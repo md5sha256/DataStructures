@@ -1,4 +1,4 @@
-package com.github.md5sha256.datastructures.benchmark;
+package com.github.md5sha256.datastructures.collections.benchmark;
 
 import com.github.md5sha256.datastructures.Main;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -12,7 +12,6 @@ import org.openjdk.jmh.annotations.State;
 import java.util.SplittableRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.random.RandomGenerator;
-import java.util.random.RandomGeneratorFactory;
 
 /**
  * Benchmark for the primitive array in Java

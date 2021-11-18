@@ -3,3 +3,6 @@
  */
 
 rootProject.name = 'DataStructures'
+include 'benchmark'
+include 'collections'
+

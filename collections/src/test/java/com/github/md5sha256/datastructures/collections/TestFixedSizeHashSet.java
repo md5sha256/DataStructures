@@ -1,6 +1,6 @@
-package com.github.md5sha256.datastructures;
+package com.github.md5sha256.datastructures.collections;
 
-import com.github.md5sha256.datastructures.utils.CollectionTests;
+import com.github.md5sha256.datastructures.collections.utils.CollectionTests;
 import org.junit.jupiter.api.Test;
 
 public class TestFixedSizeHashSet {

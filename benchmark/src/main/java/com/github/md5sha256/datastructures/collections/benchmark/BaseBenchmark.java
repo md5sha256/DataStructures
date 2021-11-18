@@ -1,7 +1,7 @@
-package com.github.md5sha256.datastructures.benchmark;
+package com.github.md5sha256.datastructures.collections.benchmark;
 
 import com.github.md5sha256.datastructures.Main;
-import com.github.md5sha256.datastructures.Collection;
+import com.github.md5sha256.datastructures.collections.Collection;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.CompilerControl;
 import org.openjdk.jmh.annotations.Level;

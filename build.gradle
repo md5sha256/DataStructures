@@ -2,26 +2,30 @@ plugins {
     id 'java'
 }
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'org.openjdk.jmh:jmh-core:1.32'
-    implementation 'org.openjdk.jmh:jmh-generator-annprocess:1.32'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-}
-
 group = 'com.github.md5sha256'
 version = '1.0-SNAPSHOT'
-description = 'DataStructures'
+description = 'DataStructures-parent'
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-    options.release.set(17)
-}
+subprojects {
 
-test {
-    useJUnitPlatform()
+    plugins.apply('java')
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.release.set(17)
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
 }

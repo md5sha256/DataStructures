@@ -1,4 +1,4 @@
-package com.github.md5sha256.datastructures.benchmark;
+package com.github.md5sha256.datastructures.collections.benchmark;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package com.github.md5sha256.datastructures;
+package com.github.md5sha256.datastructures.collections;
 
 /**
  * Represents a data structure.

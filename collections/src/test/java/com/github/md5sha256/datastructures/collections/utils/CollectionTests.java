@@ -1,6 +1,6 @@
-package com.github.md5sha256.datastructures.utils;
+package com.github.md5sha256.datastructures.collections.utils;
 
-import com.github.md5sha256.datastructures.Collection;
+import com.github.md5sha256.datastructures.collections.Collection;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.function.Supplier;

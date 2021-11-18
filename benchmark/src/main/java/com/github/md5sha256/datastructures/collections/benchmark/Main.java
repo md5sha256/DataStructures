@@ -1,8 +1,9 @@
-package com.github.md5sha256.datastructures;
+package com.github.md5sha256.datastructures.collections.benchmark;
 
-import com.github.md5sha256.datastructures.benchmark.ArrayBenchmark;
-import com.github.md5sha256.datastructures.benchmark.BaseBenchmark;
-import com.github.md5sha256.datastructures.benchmark.JavaBenchmark;
+import com.github.md5sha256.datastructures.collections.Collection;
+import com.github.md5sha256.datastructures.collections.FixedSizeHashSet;
+import com.github.md5sha256.datastructures.collections.LinkedList;
+
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
