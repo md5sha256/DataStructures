@@ -1,8 +1,8 @@
-package me.andrewandy.datastructures;
+package com.github.md5sha256.datastructures;
 
-import me.andrewandy.datastructures.benchmark.ArrayBenchmark;
-import me.andrewandy.datastructures.benchmark.BaseBenchmark;
-import me.andrewandy.datastructures.benchmark.JavaBenchmark;
+import com.github.md5sha256.datastructures.benchmark.ArrayBenchmark;
+import com.github.md5sha256.datastructures.benchmark.BaseBenchmark;
+import com.github.md5sha256.datastructures.benchmark.JavaBenchmark;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;

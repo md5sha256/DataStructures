@@ -1,4 +1,4 @@
-package me.andrewandy.datastructures;
+package com.github.md5sha256.datastructures;
 
 import java.util.Arrays;
 import java.util.Iterator;

@@ -1,6 +1,6 @@
-package me.andrewandy.datastructures.benchmark;
+package com.github.md5sha256.datastructures.benchmark;
 
-import me.andrewandy.datastructures.Main;
+import com.github.md5sha256.datastructures.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.CompilerControl;
 import org.openjdk.jmh.annotations.Level;
@@ -9,7 +9,6 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
-import java.util.Objects;
 import java.util.SplittableRandom;
 import java.util.concurrent.TimeUnit;
 

@@ -1,8 +1,9 @@
-package me.andrewandy.datastructures.benchmark;
+package com.github.md5sha256.datastructures.benchmark;
 
 import java.util.Arrays;
 import java.util.Collection;
-import me.andrewandy.datastructures.Main;
+
+import com.github.md5sha256.datastructures.Main;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.SplittableRandom;

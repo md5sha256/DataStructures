@@ -13,7 +13,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
-group = 'me.andrewandy'
+group = 'com.github.md5sha256'
 version = '1.0-SNAPSHOT'
 description = 'DataStructures'
 
